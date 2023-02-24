@@ -1,14 +1,13 @@
 """
-Tem que subir um container no docker para o banco de dados sql server
 
 1. Abrir o docker
 2. Baixar Imagem/Criar container
      docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Numsey#2022" -p 1450:1433 --name sqlserverdb -d mcr.microsoft.com/mssql/server:2019-latest
-3. Executar o script da api
-4. Executar esse script
+3. Criar banco e tabelas no sql server
+4. Executar o script da api
+5. Executar esse script
 
 """
-
 
 import requests
 
@@ -38,12 +37,12 @@ response = requests.get(URL_BASE + endpoint,)
 
 if response.status_code == 200:
     data = response.json()
-    print("|------ --------------------- -------------------- |")
-    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <20}|")
-    print("|------ --------------------- -------------------- |")
+    print("+------+---------------------+--------------------+")
+    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <19}|")
+    print("|------+---------------------+--------------------|")
     for item in data:
-        print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <20}|")
-        print("|------ --------------------- -------------------- |")
+        print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <19}|")
+        print("|------+---------------------+--------------------|")
 else:
     print('Erro ao recuperar a lista de itens')
 
@@ -54,11 +53,11 @@ response = requests.get(URL_BASE + endpoint + "/2")
 
 if response.status_code == 200:
     data = response.json()
-    print("|------ --------------------- -------------------- |")
-    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <20}|")
-    print("|------ --------------------- -------------------- |")
-    print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <20}|")
-    print("|------ --------------------- -------------------- |")
+    print("+------+---------------------+--------------------+")
+    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <19}|")
+    print("|------+---------------------+--------------------|")
+    print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <19}|")
+    print("|------+---------------------+--------------------|")
 else:
     print('Erro ao recuperar a lista de itens')
 

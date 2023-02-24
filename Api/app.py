@@ -1,33 +1,38 @@
-import sqlalchemy
+import os
 from abc import ABC, abstractmethod
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.pool import QueuePool
-from threading import local
-from flask import Flask, request, jsonify, send_from_directory, url_for, Response
+from flask import Flask, request, abort, jsonify, Response
+from flask_sqlalchemy import SQLAlchemy
+
+host=os.getenv('DB_HOST')
+user=os.getenv('DB_USER')
+password=os.getenv('DB_PASSWORD')
+database=os.getenv('DB_NAME')
 
 app = Flask(__name__)
+app.secret_key = "LZLtech"
 
-# Criar conexão com o SQL Server usando autenticação SQL Server
-engine = sqlalchemy.create_engine(
-    "mssql+pyodbc://SA:Numsey#2022@localhost,1450/LZLtech?driver=ODBC+Driver+17+for+SQL+Server"
+app.config['SQLALCHEMY_DATABASE_URI'] = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driver=ODBC+Driver+17+for+SQL+Server".format(
+    SGBD = 'mssql+pyodbc',
+    usuario = 'SA',
+    senha = 'Numsey#2022',
+    servidor = 'localhost,1450',
+    database = 'LZLtech'
 )
-connection = engine.connect()
 
-# Criar sessão com o Banco de Dados
-Base = declarative_base(engine)
-session_factory = sessionmaker(bind=engine)
-Session = scoped_session(session_factory)
+"""
+Docker config
 
-# criar um objeto de thread local para armazenar a sessão
-local_session = local()
+app.config['SQLALCHEMY_DATABASE_URI'] = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driver=ODBC+Driver+17+for+SQL+Server".format(
+    SGBD = 'mssql+pyodbc',
+    usuario = user,
+    senha = password,
+    servidor = host,
+    database = database
+)
+"""
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# criar uma função para retornar a sessão da thread atual
-def get_session():
-    if not hasattr(local_session, 'session'):
-        local_session.session = Session()
-    return local_session.session
+db = SQLAlchemy(app)
 
 class IRepository(ABC):
     @abstractmethod
@@ -51,53 +56,56 @@ class RepositoryBase(IRepository):
         self.classe = classe
 
     def find(self, id):
-        item = get_session().query(self.classe).get(id)            
+        item = self.classe.query.get(id)            
         return item         
 
     def findAll(self):
-        list = get_session().query(self.classe)  
+        list = self.classe.query.order_by(self.classe.id)
         return list
 
     def create(self, obj):
         try:
-            get_session().add(obj) 
-            get_session().commit()
+            db.session.add(obj) 
+            db.session.commit()
             return True
         except:
-            get_session().rollback()
+            db.session.rollback()
             return False
 
     def update(self, id, obj):
-        item = get_session().query(self.classe).get(id)  
+        item = self.find(id)  
         if item is not None:
             for key, value in obj.__dict__.items():
                 if key != '_sa_instance_state':
                     setattr(item, key, value)
-            get_session().commit()
+            db.session.commit()
             return True
         return False
 
     def destroy(self, id):
-        item = get_session().query(self.classe).get(id)
+        item = self.find(id) 
         if item is not None:        
             try:
-                get_session().delete(item)
-                get_session().commit()
+                db.session.delete(item)
+                db.session.commit()
                 return True
             except:
                 return False
         return False
 
-class Produto(Base):
+class Produto(db.Model):
     __tablename__ = 'Produtos'
-    id = Column('Id', Integer, primary_key=True, autoincrement=True)
-    descricao = Column('Descricao', String(255), nullable=False)
-    quantidade = Column('Quantidade', Integer, nullable=False)
+    id = db.Column('Id', db.Integer, primary_key=True, autoincrement=True)
+    descricao = db.Column('Descricao', db.String(255), nullable=False)
+    quantidade = db.Column('Quantidade', db.Integer, nullable=False)
 
     def __init__(self, descricao, quantidade):
         self.descricao = descricao
         self.quantidade = quantidade
 
+    def __repr__(self):
+        return '<Descricao %r>' % self.descricao
+    
 class ProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Produto)
@@ -120,7 +128,7 @@ def get_product(id):
         }
         return jsonify(produto)
     else:
-        abort(400, 'Error')
+       abort(400, 'Error')
 
 
 @app.route('/produto', methods=['GET'])
@@ -160,7 +168,7 @@ def update_product(id):
 
 @app.route('/produto/<int:id>', methods=['DELETE'])
 def delete_product(id):
-    result = produtoEncontrado = produtoRepository.destroy(id)
+    result = produtoRepository.destroy(id)
     if result == True:
         return Response(status=204)
     else:
