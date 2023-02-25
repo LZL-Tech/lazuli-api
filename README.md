@@ -1,4 +1,4 @@
-> Como executar a apicação
+> Como executar o projeto
 
 - Abrir o docker
 - Abrir o cmd e executar o comando
