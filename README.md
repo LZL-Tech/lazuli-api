@@ -7,13 +7,13 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Numsey#2022" -p 1450:1433 --name s
 ```
 - Verificar se o docker baixou a imagem e o container subiu
 <div align="center">
-  <img src="repoImages/img01.png">
+  <img src=".github/img01.png">
 </div>
 
 - Abrir o Microsoft SQL Server Management Studio
 - Configurar ele como na imagem abaixo, Login: SA e Senha: Numsey#2022
 <div align="center">
-  <img src="repoImages/img02.png">
+  <img src=".github/img02.png">
 </div>
 
 - Clicar em 'Nova Consulta', colar o script sql abaixo:
@@ -35,5 +35,5 @@ GO
 - Entrar na pasta Test, abrir o test.py e executar
 - No fim tem que ter esse resultado abaixo:
 <div align="center">
-  <img src="repoImages/img03.png">
+  <img src=".github/img03.png">
 </div>
