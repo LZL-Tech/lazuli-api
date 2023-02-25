@@ -1,6 +1,6 @@
-from app import db
-from interfaces import IRepository
-from models import Produto
+from ..app import db
+from repository.interface_repository import IRepository
+from domain.models import Produto
 
 class RepositoryBase(IRepository):
     def __init__(self, classe):

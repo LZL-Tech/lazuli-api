@@ -4,7 +4,7 @@ services:
   api:
     container_name: api-container
     build: 
-      context: ./Api
+      context: ./app
       dockerfile: Dockerfile
     environment:
       DB_HOST: db
@@ -15,23 +15,23 @@ services:
       - "9007:5000"
     restart: always
     networks:
-      - minha-rede
+      - lazuli-network
     depends_on:
       - db
   db:
     container_name: mssql-container
     build: 
-      context: ./Db
+      context: ./database
       dockerfile: Dockerfile
     environment:
       - TZ=America/Sao_Paulo
     ports:
       - 1450:1433
     volumes:
-      - c:\dados\volumes\mssql:/var/opt/mssql/data
+      - ./database:/var/opt/mssql/data
     restart: always
     networks:
-      - minha-rede
+      - lazuli-network
 networks:
-   minha-rede:
+   lazuli-network:
      driver: bridge
