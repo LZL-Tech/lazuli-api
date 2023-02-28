@@ -7,10 +7,10 @@ services:
       context: ./app
       dockerfile: Dockerfile
     environment:
-      DB_HOST: db
-      DB_NAME: LZLtech
+      DB_HOST: localhost
+      DB_NAME: LZLTech
       DB_USER: SA
-      DB_PASSWORD: Numsey#2022
+      DB_PASSWORD: 123_Mudar
     ports:
       - "9007:5000"
     restart: always
@@ -28,7 +28,7 @@ services:
     ports:
       - 1450:1433
     volumes:
-      - ./database:/var/opt/mssql/data
+      - ./database/.docker:/var/opt/mssql/data
     restart: always
     networks:
       - lazuli-network

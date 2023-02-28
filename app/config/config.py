@@ -1,14 +1,14 @@
 #from env import host, user, password, database
-from app import app
 
 SECRET_KEY =  "LZLtech"
 
 SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driver=ODBC+Driver+17+for+SQL+Server".format(
     SGBD = 'mssql+pyodbc',
-    usuario = 'SA',
-    senha = 'Numsey#2022',
-    servidor = 'localhost,1450',
-    database = 'LZLtech'
+    usuario = 'sa',
+    senha = '123_Mudar',
+    servidor = '127.0.0.1',
+    porta = '1433',
+    database = 'lazuli'
 )
 
 """
