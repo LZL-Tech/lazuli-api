@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     environment:
       DB_HOST: localhost
-      DB_NAME: LZLTech
+      DB_NAME: lazuli
       DB_USER: SA
       DB_PASSWORD: 123_Mudar
     ports:
@@ -20,7 +20,7 @@ services:
       - db
   db:
     container_name: mssql-container
-    build: 
+    build:
       context: ./database
       dockerfile: Dockerfile
     environment:

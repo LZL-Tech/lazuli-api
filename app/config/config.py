@@ -6,7 +6,7 @@ SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driv
     SGBD = 'mssql+pyodbc',
     usuario = 'sa',
     senha = '123_Mudar',
-    servidor = '127.0.0.1',
+    servidor = 'localhost',
     porta = '1433',
     database = 'lazuli'
 )
