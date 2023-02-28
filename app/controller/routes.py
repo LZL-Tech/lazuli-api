@@ -12,12 +12,12 @@ def index():
 
 @app.route('/produto/<int:id>', methods=['GET'])
 def get_product(id):
-    produtoEncontrado = produtoRepository.find(id)
-    if produtoEncontrado is not None:
+    produto_encontrado = produtoRepository.find(id)
+    if produto_encontrado is not None:
         produto = {
-            'id': produtoEncontrado.id,
-            'descricao': produtoEncontrado.descricao,
-            'quantidade':produtoEncontrado.quantidade
+            'id': produto_encontrado.id,
+            'descricao': produto_encontrado.descricao,
+            'quantidade':produto_encontrado.quantidade
         }
         return jsonify(produto)
     else:
