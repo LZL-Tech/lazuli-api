@@ -1,3 +1,7 @@
+CREATE DATABASE lazuli;
+
+USE lazuli;
+
 -- DROP SCHEMA dbo;
 
 CREATE SCHEMA dbo;
