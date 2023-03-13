@@ -25,9 +25,17 @@ def get_product(id):
 
 
 @app.route('/produto', methods=['GET'])
-def get_products():  
+def get_products():
     produtos = produtoRepository.findAll()
-    lista_produtos = [{'id': produto.id, 'descricao': produto.descricao, 'quantidade': produto.quantidade} for produto in produtos]
+    for produto in produtos:
+        print(f'Produtos: {produto}')
+    lista_produtos = [
+        {
+            'id': produto.id,
+            'descricao': produto.descricao,
+            'quantidade': produto.quantidade,
+            'tipo_produto': produto.id_tipo_produto
+        } for produto in produtos]
     return jsonify(lista_produtos)
 
 @app.route('/produto', methods=['POST'])
