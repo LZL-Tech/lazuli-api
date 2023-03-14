@@ -1,6 +1,6 @@
 from app import db
 from interfaces import IRepository
-from models import Produto
+from models import Produto, TipoProduto
 
 class RepositoryBase(IRepository):
     def __init__(self, classe):
@@ -47,3 +47,7 @@ class RepositoryBase(IRepository):
 class ProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Produto)
+
+class TipoProdutoRepository(RepositoryBase):
+    def __init__(self):
+        super().__init__(TipoProduto)
