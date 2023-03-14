@@ -123,8 +123,12 @@ else:
 
 print("UPDATE")
 data = { 
-    'descricao': 'Descrição Update', 
-    'quantidade': 999
+      'descricao': 'Update Up',
+      'id_tipo_produto': 1,
+      'marca': 'Confeitaria Update',
+      'qtd_estoque': 5,
+      'id_unidade_medida' : 1,
+      'preco': 12.00
 }
 
 response = requests.put(URL_BASE + endpoint + "/2", json=data)
