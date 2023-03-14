@@ -61,16 +61,31 @@ for data in lista_add_produtos:
         print('Erro ao criar o item')
 
 print("SELECT ALL")
-response = requests.get(URL_BASE + endpoint)
+response = requests.get(URL_BASE + endpoint,)
 
 if response.status_code == 200:
     data = response.json()
-    print("+------+---------------------+--------------------+")
-    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <19}|")
-    print("|------+---------------------+--------------------|")
+    print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*13}+{'-'*11}+")
+    print(f"| {'ID': <5}| {'Descrição': <24}| {'Marca': <21}| {'Qtd Estoque': <10}| {'Unidade': <12}| {'Tipo Produto': <12}| {'Preço': <10}|")
+    print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*13}+{'-'*11}+")
     for item in data:
-        print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <19}|")
-        print("|------+---------------------+--------------------|")
+        id_produto = item['id_produto']
+        id_produto = 'NULL' if id_produto is None else str(id_produto)
+        descricao = item['descricao']
+        descricao = 'NULL' if descricao is None else str(descricao)
+        marca = item['marca']
+        marca = 'NULL' if marca is None else str(marca)
+        qtd_estoque = item['qtd_estoque']
+        qtd_estoque = 'NULL' if qtd_estoque is None else str(qtd_estoque)
+        preco = item['preco']
+        preco = 'NULL' if preco is None else str(preco)
+        unidade_medida = item['unidade_medida']['descricao']
+        unidade_medida = 'NULL' if unidade_medida is None else str(unidade_medida)
+        tipo_produto = item['tipo_produto']['descricao']
+        tipo_produto = 'NULL' if tipo_produto is None else str(tipo_produto)
+
+        print(f"| {id_produto: <5}| {descricao: <24}| {marca : <21}| {qtd_estoque: <11}| {unidade_medida: <12}| {tipo_produto: <12}| {preco: <10}|")
+        print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*13}+{'-'*11}+")
 else:
     print('Erro ao recuperar a lista de itens')
 

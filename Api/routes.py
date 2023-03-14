@@ -29,13 +29,35 @@ def get_product(id):
     else:
        abort(400, 'Error')
 
-
 @app.route('/produto', methods=['GET'])
 def get_products():  
     produtos = produtoRepository.findAll()
-    lista_produtos = [{'id': produto.id, 'descricao': produto.descricao, 'quantidade': produto.quantidade} for produto in produtos]
-    return jsonify(lista_produtos)
+    serializados = []
 
+    if len(produtos) > 0:       
+        for produto in produtos:
+            produto_serializado = {
+                'id_produto': produto.id,
+                'descricao': produto.descricao,
+                'marca':produto.marca,
+                'qtd_estoque':produto.qtd_estoque,
+                'preco':produto.preco,
+                'id_unidade_medida':produto.id_unidade_medida,
+                'id_tipo_produto':produto.id_tipo_produto,
+                'tipo_produto': {
+                    'id_tipo_produto': produto.tipo_produto.id, 
+                    'descricao': produto.tipo_produto.descricao
+                },
+                'unidade_medida': {
+                    'id_unidade_medida': produto.unidade_medida.id, 
+                    'descricao': produto.unidade_medida.descricao, 
+                    'simbolo': produto.unidade_medida.simbolo
+                }
+            }
+
+            serializados.append(produto_serializado)
+
+    return jsonify(serializados)
 
 @app.route('/produto', methods=['POST'])
 def add_product():
@@ -73,7 +95,6 @@ def add_product():
         return Response(status=201)
     else:
         abort(400, 'Error')
-
 
 @app.route('/produto/<int:id>', methods=['PUT'])
 def update_product(id):

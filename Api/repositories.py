@@ -1,4 +1,4 @@
-from app import db
+from app import db, joinedload
 from interfaces import IRepository
 from models import Produto, TipoProduto
 
@@ -47,6 +47,13 @@ class RepositoryBase(IRepository):
 class ProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Produto)
+
+    def findAll(self):
+        list = db.session.query(Produto).options(
+            joinedload('unidade_medida'),
+            joinedload('tipo_produto')
+        ).all()    
+        return list
 
 class TipoProdutoRepository(RepositoryBase):
     def __init__(self):
