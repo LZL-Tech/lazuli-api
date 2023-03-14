@@ -16,10 +16,15 @@ def get_product(id):
     produtoEncontrado = produtoRepository.find(id)
     if produtoEncontrado is not None:
         produto = {
-            'id': produtoEncontrado.id,
+            'id_produto': produtoEncontrado.id,
             'descricao': produtoEncontrado.descricao,
-            'quantidade':produtoEncontrado.quantidade
+            'marca':produtoEncontrado.marca,
+            'qtd_estoque':produtoEncontrado.qtd_estoque,
+            'preco':produtoEncontrado.preco,
+            'id_unidade_medida':produtoEncontrado.id_unidade_medida,
+            'id_tipo_produto':produtoEncontrado.id_tipo_produto
         }
+        
         return jsonify(produto)
     else:
        abort(400, 'Error')
