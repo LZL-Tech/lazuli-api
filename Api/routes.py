@@ -101,10 +101,18 @@ def update_product(id):
     produtoEncontrado = produtoRepository.find(id)
 
     descricao = request.json['descricao']
-    quantidade = request.json['quantidade']
+    marca = request.json['marca']
+    qtd_estoque = request.json['qtd_estoque']
+    preco = request.json['preco']
+    id_unidade_medida = request.json['id_unidade_medida']
+    id_tipo_produto = request.json['id_tipo_produto']
 
-    produtoEncontrado.descricao = descricao
-    produtoEncontrado.quantidade = quantidade
+    produtoEncontrado.descricao = descricao    
+    produtoEncontrado.qtd_estoque = qtd_estoque      
+    produtoEncontrado.id_unidade_medida = id_unidade_medida
+    produtoEncontrado.id_tipo_produto = id_tipo_produto
+    produtoEncontrado.marca = marca
+    produtoEncontrado.preco = preco
 
     result = produtoRepository.update(id, produtoEncontrado)
 
