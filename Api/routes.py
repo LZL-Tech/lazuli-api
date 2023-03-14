@@ -120,3 +120,18 @@ def delete_product(id):
         return Response(status=204)
     else:
         abort(400, 'Error')
+
+@app.route('/tipo_produto', methods=['GET'])
+def get_tipo_produtos():  
+    tipo_produtos = tipoProdutoRepository.findAll()
+    serializados = []
+
+    if len(tipo_produtos) > 0:       
+        for tipo_produto in tipo_produtos:
+            tipo_produto_serializado = {
+                'id_tipo_produto': tipo_produto.id,
+                'descricao': tipo_produto.descricao
+            }
+            serializados.append(tipo_produto_serializado)
+
+    return jsonify(serializados)

@@ -11,7 +11,7 @@ class RepositoryBase(IRepository):
         return item         
 
     def findAll(self):
-        list = self.classe.query.order_by(self.classe.id)
+        list = self.classe.query.order_by(self.classe.id).all() 
         return list
 
     def create(self, obj):
