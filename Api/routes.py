@@ -1,9 +1,10 @@
 from flask import request, abort, jsonify, Response
 from app import app
 from models import Produto
-from repositories import ProdutoRepository
+from repositories import ProdutoRepository, TipoProdutoRepository
 
 produtoRepository = ProdutoRepository()
+tipoProdutoRepository = TipoProdutoRepository()
 
 @app.route('/')
 @app.route('/home')
@@ -30,12 +31,39 @@ def get_products():
     lista_produtos = [{'id': produto.id, 'descricao': produto.descricao, 'quantidade': produto.quantidade} for produto in produtos]
     return jsonify(lista_produtos)
 
+
 @app.route('/produto', methods=['POST'])
 def add_product():
+    #Entrada de dados
     descricao = request.json['descricao']
-    quantidade = request.json['quantidade']
-    novo_produto = Produto(descricao, quantidade)
+    marca = request.json['marca']
+    qtd_estoque = request.json['qtd_estoque']
+    preco = request.json['preco']
+    id_unidade_medida = request.json['id_unidade_medida']
+    id_tipo_produto = request.json['id_tipo_produto']
+    
+    novo_produto = Produto()
+
+    #Criando objeto
+    tipoProdutoEncontrado = tipoProdutoRepository.find(id_tipo_produto)
+    if tipoProdutoEncontrado is not None:
+        if tipoProdutoEncontrado.descricao == 'Ingrediente':
+            novo_produto.descricao = descricao    
+            novo_produto.qtd_estoque = qtd_estoque      
+            novo_produto.id_unidade_medida = id_unidade_medida
+            novo_produto.id_tipo_produto = id_tipo_produto
+            novo_produto.marca = marca
+        else:
+            novo_produto.descricao = descricao    
+            novo_produto.qtd_estoque = qtd_estoque      
+            novo_produto.id_unidade_medida = id_unidade_medida
+            novo_produto.id_tipo_produto = id_tipo_produto
+            novo_produto.preco = preco
+
+    #Inserindo dado no banco de dados
     result = produtoRepository.create(novo_produto)
+
+    #Validando se deu certo a operação
     if result == True:
         return Response(status=201)
     else:

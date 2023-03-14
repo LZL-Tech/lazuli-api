@@ -18,10 +18,34 @@ endpoint = "produto"
 
 print("INSERT")
 lista_add_produtos = [
-    { 'descricao': 'Descrição 1', 'quantidade': 10},
-    { 'descricao': 'Descrição 2', 'quantidade': 50},
-    { 'descricao': 'Descrição 3', 'quantidade': 5},
-    { 'descricao': 'Descrição 4', 'quantidade': 20}
+    { 'descricao': 'Pão de Mel',
+      'id_tipo_produto': 4,
+      'marca': 'Confeitaria Delícia',
+      'qtd_estoque': 20,
+      'id_unidade_medida' : 1,
+      'preco': 4.50
+     },
+    { 'descricao': 'Brigadeiro',
+      'id_tipo_produto': 2,
+      'marca': 'Confeitaria Doce Sabor',
+      'qtd_estoque': 100,
+      'id_unidade_medida' : 2,
+      'preco': 3.50
+     },
+    { 'descricao': 'Torta de Morango',
+      'id_tipo_produto': 1,
+      'marca': 'Confeitaria Saborosa',
+      'qtd_estoque': 5,
+      'id_unidade_medida' : 1,
+      'preco': 35.00
+     },
+    { 'descricao': 'Bolo de chocolate',
+      'id_tipo_produto': 1,
+      'marca': 'Confeitaria Delícia',
+      'qtd_estoque': 10,
+      'id_unidade_medida' : 1,
+      'preco': 50.00
+     }
 ]
 
 for data in lista_add_produtos:

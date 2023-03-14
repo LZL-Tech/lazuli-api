@@ -8,7 +8,7 @@ SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driv
     usuario = 'SA',
     senha = 'Numsey#2022',
     servidor = 'localhost,1450',
-    database = 'LZLtech'
+    database = 'lazuli'
 )
 
 """
