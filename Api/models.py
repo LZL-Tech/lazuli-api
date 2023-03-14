@@ -5,7 +5,7 @@ class Produto(db.Model):
     id = db.Column('id_produto', db.Integer, primary_key=True, autoincrement=True)
     descricao = db.Column('descricao', db.String(150), nullable=False)
     marca = db.Column('marca', db.String(100), nullable=False)
-    qtd_estoque = db.Column('qtd_estoque', db.Float, nullable=True)
+    qtd_estoque = db.Column('qtd_estoque', db.Numeric(precision=8, scale=2), nullable=True)
     preco = db.Column('preco', db.Numeric(precision=8, scale=2), nullable=False)
     id_unidade_medida = db.Column(db.Integer, db.ForeignKey('unidade_medida.id_unidade_medida'), nullable=False)
     id_tipo_produto = db.Column(db.Integer, db.ForeignKey('tipo_produto.id_tipo_produto'), nullable=False)

@@ -18,34 +18,38 @@ endpoint = "produto"
 
 print("INSERT")
 lista_add_produtos = [
-    { 'descricao': 'Pão de Mel',
+    { 
+      'descricao': 'Pão de Mel',
       'id_tipo_produto': 4,
       'marca': 'Confeitaria Delícia',
       'qtd_estoque': 20,
       'id_unidade_medida' : 1,
       'preco': 4.50
-     },
-    { 'descricao': 'Brigadeiro',
+    },
+    { 
+      'descricao': 'Brigadeiro',
       'id_tipo_produto': 2,
       'marca': 'Confeitaria Doce Sabor',
       'qtd_estoque': 100,
       'id_unidade_medida' : 2,
       'preco': 3.50
-     },
-    { 'descricao': 'Torta de Morango',
+    },
+    { 
+      'descricao': 'Torta de Morango',
       'id_tipo_produto': 1,
       'marca': 'Confeitaria Saborosa',
       'qtd_estoque': 5,
       'id_unidade_medida' : 1,
       'preco': 35.00
-     },
-    { 'descricao': 'Bolo de chocolate',
+    },
+    { 
+      'descricao': 'Bolo de chocolate',
       'id_tipo_produto': 1,
       'marca': 'Confeitaria Delícia',
       'qtd_estoque': 10,
       'id_unidade_medida' : 1,
       'preco': 50.00
-     }
+    }
 ]
 
 for data in lista_add_produtos:
@@ -57,7 +61,7 @@ for data in lista_add_produtos:
         print('Erro ao criar o item')
 
 print("SELECT ALL")
-response = requests.get(URL_BASE + endpoint,)
+response = requests.get(URL_BASE + endpoint)
 
 if response.status_code == 200:
     data = response.json()
@@ -77,11 +81,27 @@ response = requests.get(URL_BASE + endpoint + "/2")
 
 if response.status_code == 200:
     data = response.json()
-    print("+------+---------------------+--------------------+")
-    print(f"| {'ID': <5}| {'Descrição': <20}| {'Quantidade': <19}|")
-    print("|------+---------------------+--------------------|")
-    print(f"| {item['id']: <5}| {item['descricao']: <20}| {item['quantidade']: <19}|")
-    print("|------+---------------------+--------------------|")
+
+    id_produto = data['id_produto']
+    id_produto = 'NULL' if id_produto is None else str(id_produto)
+    descricao = data['descricao']
+    descricao = 'NULL' if descricao is None else str(descricao)
+    marca = data['marca']
+    marca = 'NULL' if marca is None else str(marca)
+    qtd_estoque = data['qtd_estoque']
+    qtd_estoque = 'NULL' if qtd_estoque is None else str(qtd_estoque)
+    preco = data['preco']
+    preco = 'NULL' if preco is None else str(preco)
+    id_unidade_medida = data['id_unidade_medida']
+    id_unidade_medida = 'NULL' if id_unidade_medida is None else str(id_unidade_medida)
+    id_tipo_produto = data['id_tipo_produto']
+    id_tipo_produto = 'NULL' if id_tipo_produto is None else str(id_tipo_produto)
+
+    print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*11}+")
+    print(f"| {'ID': <5}| {'Descrição': <24}| {'Marca': <21}| {'Qtd Estoque': <10}| {'Unidade': <12}| {'Preço': <10}|")
+    print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*11}+")
+    print(f"| {id_produto: <5}| {descricao: <24}| {marca : <21}| {qtd_estoque: <11}| {id_unidade_medida: <12}| {preco: <10}|")
+    print(f"+{'-'*6}+{'-'*25}+{'-'*22}+{'-'*12}+{'-'*13}+{'-'*11}+")
 else:
     print('Erro ao recuperar a lista de itens')
 
