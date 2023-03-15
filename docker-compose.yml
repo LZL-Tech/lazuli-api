@@ -33,5 +33,5 @@ services:
     networks:
       - lazuli-network
 networks:
-   lazuli-network:
-     driver: bridge
+  lazuli-network:
+    driver: bridge
