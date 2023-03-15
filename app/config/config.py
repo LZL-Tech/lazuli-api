@@ -6,8 +6,8 @@ SECRET_KEY =  "LZLtech"
 SQLALCHEMY_DATABASE_URI = "{SGBD}://{usuario}:{senha}@{servidor}/{database}?driver=ODBC+Driver+17+for+SQL+Server".format(
     SGBD = 'mssql+pyodbc',
     usuario = 'SA',
-    senha = 'Numsey#2022',
-    servidor = 'localhost,1450',
+    senha = '123_Mudar',
+    servidor = 'localhost,1433',
     database = 'lazuli'
 )
 

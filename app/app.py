@@ -3,11 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
-app.config.from_pyfile('config.py')
+app.config.from_pyfile('config/config.py')
 
 db = SQLAlchemy(app)
 
-from routes import *
+from controller.routes import *
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

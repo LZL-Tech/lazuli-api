@@ -18,15 +18,15 @@ endpoint = "produto"
 
 print("INSERT")
 lista_add_produtos = [
-    { 
+    {
       'descricao': 'Pão de Mel',
-      'id_tipo_produto': 4,
+      'id_tipo_produto': 1,
       'marca': 'Confeitaria Delícia',
       'qtd_estoque': 20,
       'id_unidade_medida' : 1,
       'preco': 4.50
     },
-    { 
+    {
       'descricao': 'Brigadeiro',
       'id_tipo_produto': 2,
       'marca': 'Confeitaria Doce Sabor',
@@ -34,7 +34,7 @@ lista_add_produtos = [
       'id_unidade_medida' : 2,
       'preco': 3.50
     },
-    { 
+    {
       'descricao': 'Torta de Morango',
       'id_tipo_produto': 1,
       'marca': 'Confeitaria Saborosa',
@@ -42,7 +42,7 @@ lista_add_produtos = [
       'id_unidade_medida' : 1,
       'preco': 35.00
     },
-    { 
+    {
       'descricao': 'Bolo de chocolate',
       'id_tipo_produto': 1,
       'marca': 'Confeitaria Delícia',
@@ -122,7 +122,7 @@ else:
 
 
 print("UPDATE")
-data = { 
+data = {
       'descricao': 'Update Up',
       'id_tipo_produto': 1,
       'marca': 'Confeitaria Update',

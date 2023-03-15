@@ -1,7 +1,7 @@
 from flask import request, abort, jsonify, Response
 from app import app
-from models import Produto
-from repositories import ProdutoRepository, TipoProdutoRepository
+from domain.models import Produto
+from repository.repositories import ProdutoRepository, TipoProdutoRepository
 
 produtoRepository = ProdutoRepository()
 tipoProdutoRepository = TipoProdutoRepository()
@@ -24,17 +24,17 @@ def get_product(id):
             'id_unidade_medida':produtoEncontrado.id_unidade_medida,
             'id_tipo_produto':produtoEncontrado.id_tipo_produto
         }
-        
+
         return jsonify(produto)
     else:
        abort(400, 'Error')
 
 @app.route('/produto', methods=['GET'])
-def get_products():  
+def get_products():
     produtos = produtoRepository.findAll()
     serializados = []
 
-    if len(produtos) > 0:       
+    if len(produtos) > 0:
         for produto in produtos:
             produto_serializado = {
                 'id_produto': produto.id,
@@ -45,12 +45,12 @@ def get_products():
                 'id_unidade_medida':produto.id_unidade_medida,
                 'id_tipo_produto':produto.id_tipo_produto,
                 'tipo_produto': {
-                    'id_tipo_produto': produto.tipo_produto.id, 
+                    'id_tipo_produto': produto.tipo_produto.id,
                     'descricao': produto.tipo_produto.descricao
                 },
                 'unidade_medida': {
-                    'id_unidade_medida': produto.unidade_medida.id, 
-                    'descricao': produto.unidade_medida.descricao, 
+                    'id_unidade_medida': produto.unidade_medida.id,
+                    'descricao': produto.unidade_medida.descricao,
                     'simbolo': produto.unidade_medida.simbolo
                 }
             }
@@ -68,21 +68,21 @@ def add_product():
     preco = request.json['preco']
     id_unidade_medida = request.json['id_unidade_medida']
     id_tipo_produto = request.json['id_tipo_produto']
-    
+
     novo_produto = Produto()
 
     #Criando objeto
-    tipoProdutoEncontrado = tipoProdutoRepository.find(id_tipo_produto)
+    tipoProdutoEncontrado: Produto = tipoProdutoRepository.find(id_tipo_produto)
     if tipoProdutoEncontrado is not None:
-        if tipoProdutoEncontrado.descricao == 'Ingrediente':
-            novo_produto.descricao = descricao    
-            novo_produto.qtd_estoque = qtd_estoque      
+        if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
+            novo_produto.descricao = descricao
+            novo_produto.qtd_estoque = qtd_estoque
             novo_produto.id_unidade_medida = id_unidade_medida
             novo_produto.id_tipo_produto = id_tipo_produto
             novo_produto.marca = marca
         else:
-            novo_produto.descricao = descricao    
-            novo_produto.qtd_estoque = qtd_estoque      
+            novo_produto.descricao = descricao
+            novo_produto.qtd_estoque = qtd_estoque
             novo_produto.id_unidade_medida = id_unidade_medida
             novo_produto.id_tipo_produto = id_tipo_produto
             novo_produto.preco = preco
@@ -98,7 +98,7 @@ def add_product():
 
 @app.route('/produto/<int:id>', methods=['PUT'])
 def update_product(id):
-    produtoEncontrado = produtoRepository.find(id)
+    produto_encontrado: Produto = produtoRepository.find(id)
 
     descricao = request.json['descricao']
     marca = request.json['marca']
@@ -107,14 +107,14 @@ def update_product(id):
     id_unidade_medida = request.json['id_unidade_medida']
     id_tipo_produto = request.json['id_tipo_produto']
 
-    produtoEncontrado.descricao = descricao    
-    produtoEncontrado.qtd_estoque = qtd_estoque      
-    produtoEncontrado.id_unidade_medida = id_unidade_medida
-    produtoEncontrado.id_tipo_produto = id_tipo_produto
-    produtoEncontrado.marca = marca
-    produtoEncontrado.preco = preco
+    produto_encontrado.descricao = descricao
+    produto_encontrado.qtd_estoque = qtd_estoque
+    produto_encontrado.id_unidade_medida = id_unidade_medida
+    produto_encontrado.id_tipo_produto = id_tipo_produto
+    produto_encontrado.marca = marca
+    produto_encontrado.preco = preco
 
-    result = produtoRepository.update(id, produtoEncontrado)
+    result = produtoRepository.update(id, produto_encontrado)
 
     if result == True:
         return Response(status=204)
@@ -130,11 +130,11 @@ def delete_product(id):
         abort(400, 'Error')
 
 @app.route('/tipo_produto', methods=['GET'])
-def get_tipo_produtos():  
+def get_tipo_produtos():
     tipo_produtos = tipoProdutoRepository.findAll()
     serializados = []
 
-    if len(tipo_produtos) > 0:       
+    if len(tipo_produtos) > 0:
         for tipo_produto in tipo_produtos:
             tipo_produto_serializado = {
                 'id_tipo_produto': tipo_produto.id,
