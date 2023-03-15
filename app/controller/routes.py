@@ -1,7 +1,7 @@
 from flask import request, abort, jsonify, Response
 from app import app
-from models import Produto
-from repositories import ProdutoRepository, TipoProdutoRepository
+from domain.models import Produto
+from repository.repositories import ProdutoRepository, TipoProdutoRepository
 
 produtoRepository = ProdutoRepository()
 tipoProdutoRepository = TipoProdutoRepository()

@@ -1,6 +1,6 @@
 from app import db, joinedload
-from interfaces import IRepository
-from models import Produto, TipoProduto
+from repository.interfaces import IRepository
+from domain.models import Produto, TipoProduto
 import logging as log
 
 class RepositoryBase(IRepository):
