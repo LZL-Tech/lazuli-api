@@ -1,7 +1,9 @@
-from flask import request, abort, jsonify, Response
-from app import app
 from domain.models import Produto
+from flask import Response, abort, jsonify, request
+from flask_cors import cross_origin
 from repository.repositories import ProdutoRepository, TipoProdutoRepository
+
+from app import app
 
 produtoRepository = ProdutoRepository()
 tipoProdutoRepository = TipoProdutoRepository()
@@ -142,4 +144,6 @@ def get_tipo_produtos():
             }
             serializados.append(tipo_produto_serializado)
 
-    return jsonify(serializados)
+    response = jsonify(serializados)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
