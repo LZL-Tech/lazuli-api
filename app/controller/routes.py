@@ -1,12 +1,14 @@
-from domain.models import Produto
+from typing import List
+from domain.models import Produto, UnidadeMedida
 from flask import Response, abort, jsonify, request
 from flask_cors import cross_origin
-from repository.repositories import ProdutoRepository, TipoProdutoRepository
+from repository.repositories import ProdutoRepository, TipoProdutoRepository, UnidadeMedidaRepository
 
 from app import app
 
-produtoRepository = ProdutoRepository()
-tipoProdutoRepository = TipoProdutoRepository()
+produto_repository = ProdutoRepository()
+tipo_produto_repository = TipoProdutoRepository()
+unidade_medida_repository = UnidadeMedidaRepository()
 
 @app.route('/')
 @app.route('/home')
@@ -15,7 +17,7 @@ def index():
 
 @app.route('/produto/<int:id>', methods=['GET'])
 def get_product(id):
-    produtoEncontrado = produtoRepository.find(id)
+    produtoEncontrado = produto_repository.find(id)
     if produtoEncontrado is not None:
         produto = {
             'id_produto': produtoEncontrado.id,
@@ -33,7 +35,7 @@ def get_product(id):
 
 @app.route('/produto', methods=['GET'])
 def get_products():
-    produtos = produtoRepository.findAll()
+    produtos = produto_repository.findAll()
     serializados = []
 
     if len(produtos) > 0:
@@ -74,7 +76,7 @@ def add_product():
     novo_produto = Produto()
 
     #Criando objeto
-    tipoProdutoEncontrado: Produto = tipoProdutoRepository.find(id_tipo_produto)
+    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(id_tipo_produto)
     if tipoProdutoEncontrado is not None:
         if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
             novo_produto.descricao = descricao
@@ -90,7 +92,7 @@ def add_product():
             novo_produto.preco = preco
 
     #Inserindo dado no banco de dados
-    result = produtoRepository.create(novo_produto)
+    result = produto_repository.create(novo_produto)
 
     #Validando se deu certo a operação
     if result == True:
@@ -100,7 +102,7 @@ def add_product():
 
 @app.route('/produto/<int:id>', methods=['PUT'])
 def update_product(id):
-    produto_encontrado: Produto = produtoRepository.find(id)
+    produto_encontrado: Produto = produto_repository.find(id)
 
     descricao = request.json['descricao']
     marca = request.json['marca']
@@ -116,7 +118,7 @@ def update_product(id):
     produto_encontrado.marca = marca
     produto_encontrado.preco = preco
 
-    result = produtoRepository.update(id, produto_encontrado)
+    result = produto_repository.update(id, produto_encontrado)
 
     if result == True:
         return Response(status=204)
@@ -125,7 +127,7 @@ def update_product(id):
 
 @app.route('/produto/<int:id>', methods=['DELETE'])
 def delete_product(id):
-    result = produtoRepository.destroy(id)
+    result = produto_repository.destroy(id)
     if result == True:
         return Response(status=204)
     else:
@@ -133,7 +135,7 @@ def delete_product(id):
 
 @app.route('/tipo_produto', methods=['GET'])
 def get_tipo_produtos():
-    tipo_produtos = tipoProdutoRepository.findAll()
+    tipo_produtos = tipo_produto_repository.findAll()
     serializados = []
 
     if len(tipo_produtos) > 0:
@@ -147,3 +149,15 @@ def get_tipo_produtos():
     response = jsonify(serializados)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/unidade_medida', methods=['GET'])
+def get_unidades_medidas():
+    unidades_medida: List[UnidadeMedida] = unidade_medida_repository.findAll()
+    response = []
+    for unidade_medida in unidades_medida:
+        response.append({
+            'id_unidade_medida': unidade_medida.id,
+            'descricao': unidade_medida.descricao,
+            'simbolo': unidade_medida.simbolo
+        })
+    return jsonify(response)

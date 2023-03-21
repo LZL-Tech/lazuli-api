@@ -1,6 +1,6 @@
 from app import db, joinedload
 from repository.interfaces import IRepository
-from domain.models import Produto, TipoProduto
+from domain.models import Produto, TipoProduto, UnidadeMedida
 import logging as log
 
 class RepositoryBase(IRepository):
@@ -70,3 +70,8 @@ class TipoProdutoRepository(RepositoryBase):
         except Exception as ex:
             log.error(ex)
             return None
+
+class UnidadeMedidaRepository(RepositoryBase):
+
+    def __init__(self):
+        super().__init__(UnidadeMedida)
