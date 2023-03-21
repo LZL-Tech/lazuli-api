@@ -65,4 +65,23 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Numsey#2022" -p 1450:1433 --name s
 
 - Segue os passos no inicio da seção Build
 
+## Resultado do teste:
 
+Para o teste conseguir inserir os registros, é necessario inserir alguns
+dados no banco de dados por conta do relacionamento entre as tabelas referente a produtos.
+```
+USE lazuli
+GO
+INSERT INTO tipo_produto (descricao)
+VALUES ('Tipo 1')
+	   ,('Tipo 2')
+	   ,('Tipo 3')
+	   ,('Ingrediente')
+GO
+INSERT INTO unidade_medida (descricao, simbolo)
+VALUES ('gramas', 'g')
+	   ,('mililitros', 'ml')
+```
+<div align="center">
+  <img src="repoImages/img03.png">
+</div>
