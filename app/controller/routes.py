@@ -65,13 +65,13 @@ def get_products():
 
 @app.route('/produto', methods=['POST'])
 def add_product():
-    #Entrada de dados
-    descricao = request.json['descricao']
-    marca = request.json['marca']
-    qtd_estoque = request.json['qtd_estoque']
-    preco = request.json['preco']
-    id_unidade_medida = request.json['id_unidade_medida']
-    id_tipo_produto = request.json['id_tipo_produto']
+    #Entrada de dados request.json.get('descricao')
+    descricao = request.json.get('descricao')
+    marca = request.json.get('marca')
+    qtd_estoque = request.json.get('qtd_estoque')
+    preco = request.json.get('preco')
+    id_unidade_medida = request.json.get('id_unidade_medida')
+    id_tipo_produto = request.json.get('id_tipo_produto')
 
     novo_produto = Produto()
 
@@ -104,12 +104,12 @@ def add_product():
 def update_product(id):
     produto_encontrado: Produto = produto_repository.find(id)
 
-    descricao = request.json['descricao']
-    marca = request.json['marca']
-    qtd_estoque = request.json['qtd_estoque']
-    preco = request.json['preco']
-    id_unidade_medida = request.json['id_unidade_medida']
-    id_tipo_produto = request.json['id_tipo_produto']
+    descricao = request.json.get('descricao')
+    marca = request.json.get('marca')
+    qtd_estoque = request.json.get('qtd_estoque')
+    preco = request.json.get('preco')
+    id_unidade_medida = request.json.get('id_unidade_medida')
+    id_tipo_produto = request.json.get('id_tipo_produto')
 
     produto_encontrado.descricao = descricao
     produto_encontrado.qtd_estoque = qtd_estoque

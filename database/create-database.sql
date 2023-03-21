@@ -43,8 +43,8 @@ CREATE TABLE produto
 	,id_unidade_medida int NOT NULL
 	,preco decimal(10,2) NULL
 	,CONSTRAINT produto_PK PRIMARY KEY (id_produto)
-	,CONSTRAINT produto_FK FOREIGN KEY (id_tipo_produto) REFERENCES lazuli.dbo.tipo_produto(id_tipo_produto)
-	,CONSTRAINT produto_FK_1 FOREIGN KEY (id_unidade_medida) REFERENCES lazuli.dbo.unidade_medida(id_unidade_medida)
+	,CONSTRAINT produto_FK FOREIGN KEY (id_tipo_produto) REFERENCES tipo_produto(id_tipo_produto)
+	,CONSTRAINT produto_FK_1 FOREIGN KEY (id_unidade_medida) REFERENCES unidade_medida(id_unidade_medida)
 );
 GO
 CREATE TABLE venda_produto (
@@ -54,8 +54,8 @@ CREATE TABLE venda_produto (
 	,quantidade float NULL
 	,preco_unidade decimal(10,2) NOT NULL
 	,CONSTRAINT venda_produto_PK PRIMARY KEY (id_venda_produto)
-	,CONSTRAINT venda_produto_FK FOREIGN KEY (id_venda) REFERENCES lazuli.dbo.venda(id_venda)
-	,CONSTRAINT venda_produto_FK_1 FOREIGN KEY (id_produto) REFERENCES lazuli.dbo.produto(id_produto)
+	,CONSTRAINT venda_produto_FK FOREIGN KEY (id_venda) REFERENCES venda(id_venda)
+	,CONSTRAINT venda_produto_FK_1 FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 GO
 CREATE TABLE compra_produto (
@@ -67,6 +67,6 @@ CREATE TABLE compra_produto (
 	,vl_total decimal(10,2) NULL
 	,CONSTRAINT compra_produto_PK PRIMARY KEY (id_compra_produto)
 	,CONSTRAINT compra_produto_UN UNIQUE (id_compra,id_produto)
-	,CONSTRAINT compra_produto_FK FOREIGN KEY (id_produto) REFERENCES lazuli.dbo.produto(id_produto)
-	,CONSTRAINT compra_produto_FK_2 FOREIGN KEY (id_compra) REFERENCES lazuli.dbo.compra(id_compra)
+	,CONSTRAINT compra_produto_FK FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+	,CONSTRAINT compra_produto_FK_2 FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
