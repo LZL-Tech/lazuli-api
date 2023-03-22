@@ -1,5 +1,5 @@
 from typing import List
-from domain.models import Produto, UnidadeMedida
+from domain.models import Produto, UnidadeMedida, TipoProduto
 from flask import Response, abort, jsonify, request
 from flask_cors import cross_origin
 from repository.repositories import ProdutoRepository, TipoProdutoRepository, UnidadeMedidaRepository
@@ -70,25 +70,25 @@ def add_product():
     marca = request.json.get('marca')
     qtd_estoque = request.json.get('qtd_estoque')
     preco = request.json.get('preco')
-    id_unidade_medida = request.json.get('id_unidade_medida')
-    id_tipo_produto = request.json.get('id_tipo_produto')
+    unidade_medida = request.json.get('unidade_medida')
+    tipo_produto = request.json.get('tipo_produto')
 
     novo_produto = Produto()
 
     #Criando objeto
-    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(id_tipo_produto)
+    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
     if tipoProdutoEncontrado is not None:
         if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
             novo_produto.descricao = descricao
             novo_produto.qtd_estoque = qtd_estoque
-            novo_produto.id_unidade_medida = id_unidade_medida
-            novo_produto.id_tipo_produto = id_tipo_produto
+            novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
+            novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
             novo_produto.marca = marca
         else:
             novo_produto.descricao = descricao
             novo_produto.qtd_estoque = qtd_estoque
-            novo_produto.id_unidade_medida = id_unidade_medida
-            novo_produto.id_tipo_produto = id_tipo_produto
+            novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
+            novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
             novo_produto.preco = preco
 
     #Inserindo dado no banco de dados
