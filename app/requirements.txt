@@ -1,4 +1,6 @@
 Flask==2.2.2
+SQLAlchemy==1.4.23
 Flask-SQLAlchemy==3.0.3
 pyodbc==4.0.35
 Flask-Cors==3.0.10
+requests==2.28.1
