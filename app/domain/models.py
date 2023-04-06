@@ -1,4 +1,5 @@
 from app import db
+import decimal
 
 class UnidadeMedida(db.Model):
     __tablename__ = 'unidade_medida'
