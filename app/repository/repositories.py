@@ -47,3 +47,12 @@ class RepositoryBase(IRepository):
 class ProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Produto)
+
+
+class CompraRepository(RepositoryBase):
+    def __init__(self):
+        super().__init__(Compra)
+
+class CompraProdutoRepository(RepositoryBase):
+    def __init__(self):
+        super().__init__(CompraProduto)

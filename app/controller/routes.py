@@ -66,3 +66,35 @@ def delete_product(id):
         return Response(status=204)
     else:
         abort(400, 'Error')
+
+        
+@app.route('/compra/<int:id>', methods=['GET'])
+def get_compra(id):
+    compraEncontrada = compraRepository.find(id)
+    if compraEncontrada is not None:
+        compra = {
+            'id_compra': compraEncontrada.id,
+            'fornecedor': compraEncontrada.fornecedor,
+            'dt_compra':compraEncontrada.dt_compra
+        }
+
+        return jsonify(compra)
+    else:
+       abort(400, 'Error')
+
+@app.route('/compra_produto/<int:id>', methods=['GET'])
+def get_compra_produto(id):
+    compraProdutoEncontrada = compraProdutoRepository.find(id)
+    if compraProdutoEncontrada is not None:
+        compraProduto = {
+            'id_compra_produto': compraProdutoEncontrada.id_compra_produto,
+            'id_compra': compraProdutoEncontrada.id_compra,
+            'id_produto': compraProdutoEncontrada.id_produto,
+            'quantidade': compraProdutoEncontrada.quantidade,
+            'vl_unidade': compraProdutoEncontrada.vl_unidade,
+            'vl_total': compraProdutoEncontrada.vl_total
+        }
+
+        return jsonify(compraProduto)
+    else: 
+        abort(400, 'Error')

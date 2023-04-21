@@ -15,3 +15,18 @@ class Produto(db.Model):
 
     def __repr__(self):
         return '<Descricao %r>' % self.descricao
+    
+class Compra(db.Model):
+    __tablename__ = 'compra'
+    id_compra: int = db.Column('id_compra', db.Integer, primary_key=True, autoincrement=True)
+    Fornecedor: str = db.Column('fornecedor', db.String(255), nullable=False)
+    dt_Compra: datetime = db.Column('dt_Compra', db.DateTime, default =datetime.utcnow)
+
+class CompraProduto(db.Model):
+    __tablename__ = 'compra_produto'
+    id_compra_produto: int = db.Column('id_compra_produto', db.Integer, primary_key=True, autoincrement=True)
+    id_compra: int = db.Column('id_compra', db.Integer, foreign_key=True, autoincrement=True)
+    id_produto: int = db.Column('id_produto', db.Integer, foreign_key=True, autoincrement=True)
+    quantidade: int = db.Column('quantidade', db.Integer, nullable=True)
+    vl_unidade: float = db.Column('vl_unidade', db.Float, nullable=True)
+    vl_total: float = db.Column('vl_total', db.Float, nullable=True)
