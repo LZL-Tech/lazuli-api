@@ -133,6 +133,38 @@ def delete_product(id):
     else:
         abort(400, 'Error')
 
+@app.route('/produto/filter', methods=['GET'])
+def get_filter_produtos():
+    id_tipo = request.args.get('id_tipo')
+    descricao = request.args.get('descricao')
+    serializados = []
+
+    produtos = produto_repository.findAllSearch(id_tipo, descricao)
+    if len(produtos) > 0:
+        for produto in produtos:
+            produto_serializado = {
+                'id_produto': produto.id,
+                'descricao': produto.descricao,
+                'marca':produto.marca,
+                'qtd_estoque':produto.qtd_estoque,
+                'preco':produto.preco,
+                'id_unidade_medida':produto.id_unidade_medida,
+                'id_tipo_produto':produto.id_tipo_produto,
+                'tipo_produto': {
+                    'id_tipo_produto': produto.tipo_produto.id,
+                    'descricao': produto.tipo_produto.descricao
+                },
+                'unidade_medida': {
+                    'id_unidade_medida': produto.unidade_medida.id,
+                    'descricao': produto.unidade_medida.descricao,
+                    'simbolo': produto.unidade_medida.simbolo
+                }
+            }
+
+    response = jsonify(serializados)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 @app.route('/tipo_produto', methods=['GET'])
 def get_tipo_produtos():
     tipo_produtos = tipo_produto_repository.findAll()

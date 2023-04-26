@@ -58,6 +58,18 @@ class ProdutoRepository(RepositoryBase):
         ).all()
         return list
 
+    def findAllSearch(self, id_tipo, descricao):
+        list = db.session.query(Produto).join(TipoProduto).join(
+            UnidadeMedida, Produto.unidade_medida).filter(
+                Produto.descricao.like(f"%{descricao}%"),
+                TipoProduto.id == id_tipo
+            ).options(
+                joinedload('unidade_medida'),
+                joinedload('tipo_produto')
+            ).all()
+
+        return list
+
 class TipoProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(TipoProduto)
