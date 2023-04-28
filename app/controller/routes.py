@@ -2,13 +2,15 @@ from typing import List
 from domain.models import Produto, UnidadeMedida, TipoProduto
 from flask import Response, abort, jsonify, request
 from flask_cors import cross_origin
-from repository.repositories import ProdutoRepository, TipoProdutoRepository, UnidadeMedidaRepository
+from repository.repositories import *
+from itertools import groupby
 
 from app import app
 
 produto_repository = ProdutoRepository()
 tipo_produto_repository = TipoProdutoRepository()
 unidade_medida_repository = UnidadeMedidaRepository()
+compra_repository = CompraRepository()
 
 @app.route('/')
 @app.route('/home')
@@ -193,3 +195,28 @@ def get_unidades_medidas():
             'simbolo': unidade_medida.simbolo
         })
     return jsonify(response)
+
+@app.route('/compra', methods=['GET'])
+def get_compras():
+    compras = compra_repository.findAll()
+    result = []
+    for key, group in groupby(compras, lambda x: x[0]):
+        compra = {
+            "id_compra": key.id,
+            "fornecedor": key.fornecedor,
+            "dt_compra": key.dt_compra.strftime('%d/%m/%Y'),
+            "produto": []
+        }
+        for item in group:
+            compra["produto"].append({
+                "id_produto": item[2].id,
+                "descricao": item[2].descricao,
+                "quantidade": float(item[1].quantidade),
+                "vl_unidade": float(item[1].vl_unidade),
+                "vl_total": float(item[1].vl_total)
+            })
+            
+    result.append(compra)
+    response = jsonify(result)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response

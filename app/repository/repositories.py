@@ -1,6 +1,6 @@
 from app import db, joinedload
 from repository.interfaces import IRepository
-from domain.models import Produto, TipoProduto, UnidadeMedida
+from domain.models import *
 import logging as log
 
 class RepositoryBase(IRepository):
@@ -87,3 +87,22 @@ class UnidadeMedidaRepository(RepositoryBase):
 
     def __init__(self):
         super().__init__(UnidadeMedida)
+
+
+class CompraRepository(RepositoryBase):
+
+    def __init__(self):
+        super().__init__(Compra)
+
+    def findAll(self):
+        list = db.session.query(Compra, CompraProduto, Produto).join(
+                CompraProduto, CompraProduto.id_compra == Compra.id).join(
+                Produto, Produto.id == CompraProduto.id_produto
+            ).all()
+
+        return list
+
+class CompraProdutoRepository(RepositoryBase):
+
+    def __init__(self):
+        super().__init__(CompraProduto)
