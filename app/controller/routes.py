@@ -205,20 +205,10 @@ def get_unidades_medidas():
 def add_compra():
     fornecedor = request.json.get('fornecedor')
     dt_compra = request.json.get('dt_compra')
+    compra_produto = request.json.get('compra_produto')
 
-    id_produto = request.json.get('id_produto')
-    quantidade = request.json.get('quantidade')
-    vl_unidade = request.json.get('vl_unidade')
-    vl_total = request.json.get('vl_total')
-
-    if not quantidade:
-        abort(400, message="O campo 'quantidade' é obrigatório.")
-
-    if vl_total is not None and vl_unidade is None:
-        vl_unidade = vl_total / quantidade
-
-    if vl_unidade is not None and vl_total is None:
-        vl_total = vl_unidade * quantidade
+    if not fornecedor or not dt_compra or not compra_produto:
+        abort(400, message="'Dados incompletos.")
 
     nova_compra = Compra()
     nova_compra.fornecedor = fornecedor
@@ -226,7 +216,26 @@ def add_compra():
 
     result_compra: Compra = compra_repository.create(nova_compra)
 
-    if result_compra is not None:
+    if result_compra is None:
+        abort(400, 'Error ao cadastrar compra')
+
+    for item in compra_produto:
+        id_produto = item['produto']['id_produto']      
+        descricao = item['produto']['descricao']
+
+        quantidade = item['quantidade']
+        vl_unidade = item['vl_unidade']
+        vl_total = item['vl_total']
+
+        if not quantidade:
+            abort(400, message="O campo 'quantidade' é obrigatório.")
+
+        if vl_total is not None and vl_unidade is None:
+            vl_unidade = vl_total / quantidade
+
+        if vl_unidade is not None and vl_total is None:
+            vl_total = vl_unidade * quantidade
+
         nova_compra_produto = CompraProduto()
         nova_compra_produto.id_compra = result_compra.id
         nova_compra_produto.id_produto = id_produto
@@ -237,16 +246,13 @@ def add_compra():
         result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
 
         #Validando se deu certo a operação
-        if result is not None:
-            response = jsonify(None)
-            response.status_code = 201
-            response.headers['Location'] = url_for('get_compra', id=result_compra.id)
-            return response
-        else:
+        if result is None:
             abort(400, 'Error ao cadastrar compra x produto')
-    else:
-        abort(400, 'Error ao cadastrar compra')
 
+    response = jsonify(None)
+    response.status_code = 201
+    response.headers['Location'] = url_for('get_compra', id=result_compra.id)
+    return response
    
 @app.route('/compra', methods=['GET'])
 def get_compras():
