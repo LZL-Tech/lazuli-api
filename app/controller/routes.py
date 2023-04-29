@@ -1,9 +1,10 @@
 from typing import List
 from domain.models import Produto, UnidadeMedida, TipoProduto
-from flask import Response, abort, jsonify, request
+from flask import Response, abort, jsonify, request, url_for
 from flask_cors import cross_origin
 from repository.repositories import *
 from itertools import groupby
+
 
 from app import app
 
@@ -11,6 +12,7 @@ produto_repository = ProdutoRepository()
 tipo_produto_repository = TipoProdutoRepository()
 unidade_medida_repository = UnidadeMedidaRepository()
 compra_repository = CompraRepository()
+compra_produto_repository = CompraProdutoRepository()
 
 @app.route('/')
 @app.route('/home')
@@ -97,8 +99,11 @@ def add_product():
     result = produto_repository.create(novo_produto)
 
     #Validando se deu certo a operação
-    if result == True:
-        return Response(status=201)
+    if result is not None:
+        response = jsonify(None)
+        response.status_code = 201
+        response.headers['Location'] = url_for('get_product', id=result.id)
+        return response
     else:
         abort(400, 'Error')
 
@@ -196,6 +201,53 @@ def get_unidades_medidas():
         })
     return jsonify(response)
 
+@app.route('/compra', methods=['POST'])
+def add_compra():
+    fornecedor = request.json.get('fornecedor')
+    dt_compra = request.json.get('dt_compra')
+
+    id_produto = request.json.get('id_produto')
+    quantidade = request.json.get('quantidade')
+    vl_unidade = request.json.get('vl_unidade')
+    vl_total = request.json.get('vl_total')
+
+    if not quantidade:
+        abort(400, message="O campo 'quantidade' é obrigatório.")
+
+    if vl_total is not None and vl_unidade is None:
+        vl_unidade = vl_total / quantidade
+
+    if vl_unidade is not None and vl_total is None:
+        vl_total = vl_unidade * quantidade
+
+    nova_compra = Compra()
+    nova_compra.fornecedor = fornecedor
+    nova_compra.dt_compra = dt_compra
+
+    result_compra: Compra = compra_repository.create(nova_compra)
+
+    if result_compra is not None:
+        nova_compra_produto = CompraProduto()
+        nova_compra_produto.id_compra = result_compra.id
+        nova_compra_produto.id_produto = id_produto
+        nova_compra_produto.quantidade = quantidade
+        nova_compra_produto.vl_unidade = vl_unidade
+        nova_compra_produto.vl_total = vl_total
+
+        result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
+
+        #Validando se deu certo a operação
+        if result is not None:
+            response = jsonify(None)
+            response.status_code = 201
+            response.headers['Location'] = url_for('get_compra', id=result_compra.id)
+            return response
+        else:
+            abort(400, 'Error ao cadastrar compra x produto')
+    else:
+        abort(400, 'Error ao cadastrar compra')
+
+   
 @app.route('/compra', methods=['GET'])
 def get_compras():
     compras = compra_repository.findAll()
@@ -220,3 +272,7 @@ def get_compras():
     response = jsonify(result)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/compra/<int:id>', methods=['GET'])
+def get_compra(id):
+    return f"Id informado {id}"

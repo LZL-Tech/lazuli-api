@@ -19,11 +19,11 @@ class RepositoryBase(IRepository):
         try:
             db.session.add(obj)
             db.session.commit()
-            return True
+            return obj
         except Exception as ex:
             log.error(ex)
             db.session.rollback()
-            return False
+            return None
 
     def update(self, id, obj):
         item = self.find(id)
