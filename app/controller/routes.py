@@ -297,3 +297,4 @@ def get_cadastro_vendas():
     response.status_code = 201 
     Response.headers['Location'] = url_for('get_compra', id=result_compra.id_venda)
     return response
+
