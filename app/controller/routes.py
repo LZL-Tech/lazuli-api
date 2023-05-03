@@ -282,3 +282,18 @@ def get_compras():
 @app.route('/compra/<int:id>', methods=['GET'])
 def get_compra(id):
     return f"Id informado {id}"
+
+@app.route('/venda', methods=['POST'])
+def get_cadastro_vendas():
+ #Entrada dos dados através do JSON 
+    IdVenda = request.json.get('id_venda')
+    NomeCliente = request.json.get('nome_cliente')
+    ListaProdutos = request.json.get('lista_produtos')
+    IdProdutoVendido = request.json.get('id_produto_vendido')
+    QtdeVendida = request.json.get('qtde_vendida')
+    PrecoUnidadeVendida = request.json.get('preco_unidade_vendida')
+
+    response = jsonify(None)
+    response.status_code = 201 
+    Response.headers['Location'] = url_for('get_compra', id=result_compra.id_venda)
+    return response

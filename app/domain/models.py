@@ -34,7 +34,6 @@ class Produto(db.Model):
     def __str__(self) -> str:
         return f'ID: {self.id}, Descricao: {self.descricao}, Qtd_estoque: {self.qtd_estoque}, Tipo de Produto: {self.id_tipo_produto}'
 
-
 class Compra(db.Model):
     __tablename__ = 'compra'
     id: int = db.Column('id_compra', db.Integer, primary_key=True, autoincrement=True)
@@ -52,3 +51,18 @@ class CompraProduto(db.Model):
     vl_total: decimal = db.Column('vl_total', db.Numeric(precision=8, scale=2), nullable=False)
     compra: Compra  = db.relationship(Compra)
     produto: Produto = db.relationship(Produto)
+    
+class VendaProduto(db.Model):
+    __tablename__ = 'venda_produto'
+    id_venda_produto: int = db.Column('id_venda_produto', db.Integer, primary_key=True, autoincrement=True)
+    id_produto: int = db.Column('id_produto', db.Integer, primary_key=True, autoincrement=True)
+    id_venda: int = db.Column('id_venda', db.Integer, primary_key=True, autoincrement=True)
+    quantidade: float = db.Column('quantidade', db.Numeric(precision=8, scale=2), nullable=True)
+    preco_unidade: float = db.Column('preco_unidade', db.Numeric(precision=8, scale=2), nullable=False)
+
+class Venda(db.Model):
+    __tablename__='venda'
+    id: int = db.Column('id_venda', db.Integer, primary_key=True, autoincrement=True)
+    nomecliente: str = db.Column('nm_cliente', db.varchar(255))
+    data_venda: date = db.Column('dt_venda')
+    produtos_vendidos: VendaProduto
