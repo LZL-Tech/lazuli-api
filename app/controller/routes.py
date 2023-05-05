@@ -274,8 +274,7 @@ def get_compras():
                 "vl_unidade": float(item[1].vl_unidade),
                 "vl_total": float(item[1].vl_total)
             })
-
-    result.append(compra)
+        result.append(compra)
     response = jsonify(result)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
