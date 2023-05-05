@@ -167,6 +167,7 @@ def get_filter_produtos():
                     'simbolo': produto.unidade_medida.simbolo
                 }
             }
+            serializados.append(produto_serializado)
 
     response = jsonify(serializados)
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -220,7 +221,7 @@ def add_compra():
         abort(400, 'Error ao cadastrar compra')
 
     for item in compra_produto:
-        id_produto = item['produto']['id_produto']      
+        id_produto = item['produto']['id_produto']
         descricao = item['produto']['descricao']
 
         quantidade = item['quantidade']
@@ -253,7 +254,7 @@ def add_compra():
     response.status_code = 201
     response.headers['Location'] = url_for('get_compra', id=result_compra.id)
     return response
-   
+
 @app.route('/compra', methods=['GET'])
 def get_compras():
     compras = compra_repository.findAll()
@@ -273,8 +274,7 @@ def get_compras():
                 "vl_unidade": float(item[1].vl_unidade),
                 "vl_total": float(item[1].vl_total)
             })
-            
-    result.append(compra)
+        result.append(compra)
     response = jsonify(result)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
