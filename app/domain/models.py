@@ -27,7 +27,8 @@ class Produto(db.Model):
     id_tipo_produto: int = db.Column(db.Integer, db.ForeignKey('tipo_produto.id_tipo_produto'), nullable=False)
     tipo_produto: TipoProduto  = db.relationship(TipoProduto)
     unidade_medida: UnidadeMedida = db.relationship(UnidadeMedida)
-
+    vendaProdutos = db.relationship("VendaProduto", back_populates="produto")
+    
     def __repr__(self):
         return '<Descricao %r>' % self.descricao
 
@@ -52,3 +53,21 @@ class CompraProduto(db.Model):
     vl_total: decimal = db.Column('vl_total', db.Numeric(precision=8, scale=2), nullable=False)
     compra: Compra  = db.relationship(Compra)
     produto: Produto = db.relationship(Produto)
+
+class Venda(BaseModel):
+    __tablename__='venda'
+    id: int = db.Column('id_venda', db.Integer, primary_key=True, autoincrement=True)
+    nm_cliente: str = db.Column('nm_cliente', db.String(255), nullable=True)
+    dt_venda: datetime = db.Column('dt_venda', db.DateTime, nullable=True)
+    vendaProdutos = db.relationship("VendaProduto", back_populates="venda")
+
+
+class VendaProduto(BaseModel):
+    __tablename__ = 'venda_produto'
+    id: int = db.Column('id_venda_produto', db.Integer, primary_key=True, autoincrement=True)
+    quantidade: decimal = db.Column('quantidade', db.Numeric(precision=8, scale=2), nullable=True)
+    preco_unidade: decimal = db.Column('preco_unidade', db.Numeric(precision=8, scale=2), nullable=False)
+    id_produto: int = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
+    id_venda: int = db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False)
+    venda = db.relationship("Venda", back_populates="vendaProdutos")
+    produto = db.relationship("Produto", back_populates="vendaProdutos")

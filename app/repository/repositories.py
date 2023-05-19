@@ -88,7 +88,6 @@ class UnidadeMedidaRepository(RepositoryBase):
     def __init__(self):
         super().__init__(UnidadeMedida)
 
-
 class CompraRepository(RepositoryBase):
 
     def __init__(self):
@@ -106,3 +105,13 @@ class CompraProdutoRepository(RepositoryBase):
 
     def __init__(self):
         super().__init__(CompraProduto)
+
+class VendaRepository(RepositoryBase):
+
+    def __init__(self):
+        super().__init__(Venda)
+
+class VendaProdutoRepository(RepositoryBase):
+
+    def __init__(self):
+        super().__init__(VendaProduto)
