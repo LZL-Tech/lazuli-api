@@ -289,6 +289,7 @@ def get_compra(id):
 @app.route('/venda/<int:id>', methods=['GET'])
 def get_venda(id):
     vendaEncontrado: Venda = venda_repository.find(id)
+    serializados = []
     if vendaEncontrado is not None:       
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
@@ -296,34 +297,32 @@ def get_venda(id):
             'dt_venda': vendaEncontrado.dt_venda,
             "venda_produto": []
         }
-        for item in vendaEncontrado.vendaProdutos:
+        for vendaProdutos in vendaEncontrado.vendaProdutos:
             venda_serializado["venda_produto"].append({
-                "id_venda_produto": item.id,
-                "id_produto": item.id_produto,
-                "id_venda": item.id_venda,
-                "preco_unidade": float(item.preco_unidade),
-                "produto": []
-            })
-            for item2 in item.produto:
-                venda_serializado["venda_produto"]["produto"].append({
-                    'id_produto': item2.id,
-                    'descricao': item2.descricao,
-                    'marca':item2.marca,
-                    'qtd_estoque':item2.qtd_estoque,
-                    'preco':item2.preco,
-                    'id_unidade_medida':item2.id_unidade_medida,
-                    'id_tipo_produto':item2.id_tipo_produto,
+                "id_venda_produto": vendaProdutos.id,
+                "id_produto": vendaProdutos.id_produto,
+                "id_venda": vendaProdutos.id_venda,
+                "preco_unidade": float(vendaProdutos.preco_unidade),
+                "produto": {
+                    'id_produto': vendaProdutos.produto.id,
+                    'descricao': vendaProdutos.produto.descricao,
+                    'marca': vendaProdutos.produto.marca,
+                    'qtd_estoque': vendaProdutos.produto.qtd_estoque,
+                    'preco': vendaProdutos.produto.preco,
+                    'id_unidade_medida': vendaProdutos.produto.id_unidade_medida,
+                    'id_tipo_produto': vendaProdutos.produto.id_tipo_produto,
                     'tipo_produto': {
-                        'id_tipo_produto': item2.tipo_produto.id,
-                        'descricao': item2.tipo_produto.descricao
+                        'id_tipo_produto': vendaProdutos.produto.tipo_produto.id,
+                        'descricao': vendaProdutos.produto.tipo_produto.descricao
                     },
                     'unidade_medida': {
-                        'id_unidade_medida': item2.unidade_medida.id,
-                        'descricao': item2.unidade_medida.descricao,
-                        'simbolo': item2.unidade_medida.simbolo
+                        'id_unidade_medida': vendaProdutos.produto.unidade_medida.id,
+                        'descricao': vendaProdutos.produto.unidade_medida.descricao,
+                        'simbolo': vendaProdutos.produto.unidade_medida.simbolo
                     }
-                })
-            serializados.append(venda_serializado)
+                }
+            })
+        serializados.append(venda_serializado)
 
         response = jsonify(serializados)
         response.headers.add('Access-Control-Allow-Origin', '*')
@@ -345,33 +344,31 @@ def get_vendas():
                 'dt_venda': venda.dt_venda,
                 "venda_produto": []
             }
-            for item in venda.vendaProdutos:
+            for vendaProdutos in venda.vendaProdutos:
                 venda_serializado["venda_produto"].append({
-                    "id_venda_produto": item.id,
-                    "id_produto": item.id_produto,
-                    "id_venda": item.id_venda,
-                    "preco_unidade": float(item.preco_unidade),
-                    "produto": []
-                })
-                for item2 in item.produto:
-                    venda_serializado["venda_produto"]["produto"].append({
-                        'id_produto': item2.id,
-                        'descricao': item2.descricao,
-                        'marca':item2.marca,
-                        'qtd_estoque':item2.qtd_estoque,
-                        'preco':item2.preco,
-                        'id_unidade_medida':item2.id_unidade_medida,
-                        'id_tipo_produto':item2.id_tipo_produto,
+                    "id_venda_produto": vendaProdutos.id,
+                    "id_produto": vendaProdutos.id_produto,
+                    "id_venda": vendaProdutos.id_venda,
+                    "preco_unidade": float(vendaProdutos.preco_unidade),
+                    "produto": {
+                        'id_produto': vendaProdutos.produto.id,
+                        'descricao': vendaProdutos.produto.descricao,
+                        'marca': vendaProdutos.produto.marca,
+                        'qtd_estoque': vendaProdutos.produto.qtd_estoque,
+                        'preco': vendaProdutos.produto.preco,
+                        'id_unidade_medida': vendaProdutos.produto.id_unidade_medida,
+                        'id_tipo_produto': vendaProdutos.produto.id_tipo_produto,
                         'tipo_produto': {
-                            'id_tipo_produto': item2.tipo_produto.id,
-                            'descricao': item2.tipo_produto.descricao
+                            'id_tipo_produto': vendaProdutos.produto.tipo_produto.id,
+                            'descricao': vendaProdutos.produto.tipo_produto.descricao
                         },
                         'unidade_medida': {
-                            'id_unidade_medida': item2.unidade_medida.id,
-                            'descricao': item2.unidade_medida.descricao,
-                            'simbolo': item2.unidade_medida.simbolo
+                            'id_unidade_medida': vendaProdutos.produto.unidade_medida.id,
+                            'descricao': vendaProdutos.produto.unidade_medida.descricao,
+                            'simbolo': vendaProdutos.produto.unidade_medida.simbolo
                         }
-                    })
+                    }
+                })
                 serializados.append(venda_serializado)
 
     response = jsonify(serializados)
