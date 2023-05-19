@@ -54,7 +54,7 @@ class CompraProduto(db.Model):
     compra: Compra  = db.relationship(Compra)
     produto: Produto = db.relationship(Produto)
 
-class Venda(BaseModel):
+class Venda(db.Model):
     __tablename__='venda'
     id: int = db.Column('id_venda', db.Integer, primary_key=True, autoincrement=True)
     nm_cliente: str = db.Column('nm_cliente', db.String(255), nullable=True)
@@ -62,7 +62,7 @@ class Venda(BaseModel):
     vendaProdutos = db.relationship("VendaProduto", back_populates="venda")
 
 
-class VendaProduto(BaseModel):
+class VendaProduto(db.Model):
     __tablename__ = 'venda_produto'
     id: int = db.Column('id_venda_produto', db.Integer, primary_key=True, autoincrement=True)
     quantidade: decimal = db.Column('quantidade', db.Numeric(precision=8, scale=2), nullable=True)
