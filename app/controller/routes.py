@@ -13,6 +13,8 @@ tipo_produto_repository = TipoProdutoRepository()
 unidade_medida_repository = UnidadeMedidaRepository()
 compra_repository = CompraRepository()
 compra_produto_repository = CompraProdutoRepository()
+venda_repository = VendaRepository()
+venda_produto_repository = VendaProdutoRepository()
 
 @app.route('/')
 @app.route('/home')
@@ -282,3 +284,130 @@ def get_compras():
 @app.route('/compra/<int:id>', methods=['GET'])
 def get_compra(id):
     return f"Id informado {id}"
+
+
+@app.route('/venda/<int:id>', methods=['GET'])
+def get_venda(id):
+    vendaEncontrado: Venda = venda_repository.find(id)
+    serializados = []
+    if vendaEncontrado is not None:       
+        venda_serializado = {
+            'id_venda': vendaEncontrado.id,
+            'nm_cliente': vendaEncontrado.nm_cliente,
+            'dt_venda': vendaEncontrado.dt_venda,
+            "venda_produto": []
+        }
+        for vendaProdutos in vendaEncontrado.vendaProdutos:
+            venda_serializado["venda_produto"].append({
+                "id_venda_produto": vendaProdutos.id,
+                "id_produto": vendaProdutos.id_produto,
+                "id_venda": vendaProdutos.id_venda,
+                "preco_unidade": float(vendaProdutos.preco_unidade),
+                "produto": {
+                    'id_produto': vendaProdutos.produto.id,
+                    'descricao': vendaProdutos.produto.descricao,
+                    'marca': vendaProdutos.produto.marca,
+                    'qtd_estoque': vendaProdutos.produto.qtd_estoque,
+                    'preco': vendaProdutos.produto.preco,
+                    'id_unidade_medida': vendaProdutos.produto.id_unidade_medida,
+                    'id_tipo_produto': vendaProdutos.produto.id_tipo_produto,
+                    'tipo_produto': {
+                        'id_tipo_produto': vendaProdutos.produto.tipo_produto.id,
+                        'descricao': vendaProdutos.produto.tipo_produto.descricao
+                    },
+                    'unidade_medida': {
+                        'id_unidade_medida': vendaProdutos.produto.unidade_medida.id,
+                        'descricao': vendaProdutos.produto.unidade_medida.descricao,
+                        'simbolo': vendaProdutos.produto.unidade_medida.simbolo
+                    }
+                }
+            })
+        serializados.append(venda_serializado)
+
+        response = jsonify(serializados)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    else:
+       abort(400, 'Error')
+
+
+@app.route('/venda', methods=['GET'])
+def get_vendas():
+    vendas: Venda = venda_repository.findAll()
+    serializados = []
+
+    if len(vendas) > 0:            
+        for venda in vendas:
+            venda_serializado = {
+                'id_venda': venda.id,
+                'nm_cliente': venda.nm_cliente,
+                'dt_venda': venda.dt_venda,
+                "venda_produto": []
+            }
+            for vendaProdutos in venda.vendaProdutos:
+                venda_serializado["venda_produto"].append({
+                    "id_venda_produto": vendaProdutos.id,
+                    "id_produto": vendaProdutos.id_produto,
+                    "id_venda": vendaProdutos.id_venda,
+                    "preco_unidade": float(vendaProdutos.preco_unidade),
+                    "produto": {
+                        'id_produto': vendaProdutos.produto.id,
+                        'descricao': vendaProdutos.produto.descricao,
+                        'marca': vendaProdutos.produto.marca,
+                        'qtd_estoque': vendaProdutos.produto.qtd_estoque,
+                        'preco': vendaProdutos.produto.preco,
+                        'id_unidade_medida': vendaProdutos.produto.id_unidade_medida,
+                        'id_tipo_produto': vendaProdutos.produto.id_tipo_produto,
+                        'tipo_produto': {
+                            'id_tipo_produto': vendaProdutos.produto.tipo_produto.id,
+                            'descricao': vendaProdutos.produto.tipo_produto.descricao
+                        },
+                        'unidade_medida': {
+                            'id_unidade_medida': vendaProdutos.produto.unidade_medida.id,
+                            'descricao': vendaProdutos.produto.unidade_medida.descricao,
+                            'simbolo': vendaProdutos.produto.unidade_medida.simbolo
+                        }
+                    }
+                })
+                serializados.append(venda_serializado)
+
+    response = jsonify(serializados)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/venda', methods=['POST'])
+def add_venda():
+    nm_cliente: str = request.json.get('nm_cliente')
+    dt_venda: datetime = request.json.get('dt_venda')
+    venda_produto = request.json.get('venda_produto')
+
+    nova_venda = Venda()
+    nova_venda.nm_cliente = nm_cliente
+    nova_venda.dt_venda = dt_venda
+
+    result_venda: Venda = venda_repository.create(nova_venda)
+
+    if result_venda is None:
+        abort(400, 'Error ao cadastrar venda')
+
+    for item in venda_produto:
+        id_produto = item['id_produto']
+        quantidade = item['quantidade']
+        preco_unidade = item['preco_unidade']
+
+        nova_venda_produto = VendaProduto()
+        nova_venda_produto.id_venda = result_venda.id
+        nova_venda_produto.id_produto = id_produto
+        nova_venda_produto.quantidade = quantidade
+        nova_venda_produto.preco_unidade = preco_unidade
+
+        result: VendaProduto = venda_produto_repository.create(nova_venda_produto)
+
+        #Validando se deu certo a operação
+        if result is None:
+            abort(400, 'Error ao cadastrar venda x produto')
+
+    response = jsonify(None)
+    response.status_code = 201
+    response.headers['Location'] = url_for('get_venda', id=result_venda.id)
+    return response
