@@ -28,7 +28,7 @@ class Produto(db.Model):
     tipo_produto: TipoProduto  = db.relationship(TipoProduto)
     unidade_medida: UnidadeMedida = db.relationship(UnidadeMedida)
     vendaProdutos = db.relationship("VendaProduto", back_populates="produto")
-    
+
     def __repr__(self):
         return '<Descricao %r>' % self.descricao
 
