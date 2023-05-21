@@ -290,7 +290,7 @@ def get_compra(id):
 def get_venda(id):
     vendaEncontrado: Venda = venda_repository.find(id)
     serializados = []
-    if vendaEncontrado is not None:       
+    if vendaEncontrado is not None:
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
             'nm_cliente': vendaEncontrado.nm_cliente,
@@ -336,7 +336,7 @@ def get_vendas():
     vendas: Venda = venda_repository.findAll()
     serializados = []
 
-    if len(vendas) > 0:            
+    if len(vendas) > 0:
         for venda in vendas:
             venda_serializado = {
                 'id_venda': venda.id,
@@ -350,6 +350,7 @@ def get_vendas():
                     "id_produto": vendaProdutos.id_produto,
                     "id_venda": vendaProdutos.id_venda,
                     "preco_unidade": float(vendaProdutos.preco_unidade),
+                    "quantidade": vendaProdutos.quantidade,
                     "produto": {
                         'id_produto': vendaProdutos.produto.id,
                         'descricao': vendaProdutos.produto.descricao,
