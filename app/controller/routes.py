@@ -370,7 +370,7 @@ def get_vendas():
                         }
                     }
                 })
-                serializados.append(venda_serializado)
+            serializados.append(venda_serializado)
 
     response = jsonify(serializados)
     response.headers.add('Access-Control-Allow-Origin', '*')
