@@ -175,10 +175,6 @@ def get_filter_produtos():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-
-
-
-
 @app.route('/tipo_produto', methods=['GET'])
 def get_tipo_produtos():
     tipo_produtos = tipo_produto_repository.findAll()
@@ -196,9 +192,6 @@ def get_tipo_produtos():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-
-
-
 @app.route('/unidade_medida', methods=['GET'])
 def get_unidades_medidas():
     unidades_medida: List[UnidadeMedida] = unidade_medida_repository.findAll()
@@ -211,10 +204,6 @@ def get_unidades_medidas():
         })
     return jsonify(response)
 
-
-
-
-
 @app.route('/compra/<int:id>', methods=['GET'])
 def get_compra(id):
     compraEncontrado: Compra = compra_repository.find(id)
@@ -223,7 +212,7 @@ def get_compra(id):
         compra = {
             "id_compra": key.id,
             "fornecedor": key.fornecedor,
-            "dt_compra": key.dt_compra.strftime('%d/%m/%Y'),
+            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
             "produto": []
         }
         for item in group:
@@ -247,7 +236,7 @@ def get_compras():
         compra = {
             "id_compra": key.id,
             "fornecedor": key.fornecedor,
-            "dt_compra": key.dt_compra.strftime('%d/%m/%Y'),
+            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
             "produto": []
         }
         for item in group:
@@ -386,7 +375,7 @@ def get_venda(id):
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
             'nm_cliente': vendaEncontrado.nm_cliente,
-            'dt_venda': vendaEncontrado.dt_venda.strftime('%d/%m/%Y'),
+            'dt_venda': vendaEncontrado.dt_venda.strftime('%Y-%m-%d'),
             "venda_produto": []
         }
         for vendaProdutos in vendaEncontrado.vendaProdutos:
@@ -432,7 +421,7 @@ def get_vendas():
             venda_serializado = {
                 'id_venda': venda.id,
                 'nm_cliente': venda.nm_cliente,
-                'dt_venda': venda.dt_venda.strftime('%d/%m/%Y'),
+                'dt_venda': venda.dt_venda.strftime('%Y-%m-%d'),
                 "venda_produto": []
             }
             for vendaProdutos in venda.vendaProdutos:
