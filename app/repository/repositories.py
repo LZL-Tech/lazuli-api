@@ -93,6 +93,14 @@ class CompraRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Compra)
 
+    def find(self, id):
+        item = db.session.query(Compra, CompraProduto, Produto).join(
+                CompraProduto, CompraProduto.id_compra == Compra.id).join(
+                Produto, Produto.id == CompraProduto.id_produto
+            ).filter(Compra.id == id).all()
+
+        return item
+
     def findAll(self):
         list = db.session.query(Compra, CompraProduto, Produto).join(
                 CompraProduto, CompraProduto.id_compra == Compra.id).join(

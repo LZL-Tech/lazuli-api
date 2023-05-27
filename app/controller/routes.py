@@ -204,6 +204,54 @@ def get_unidades_medidas():
         })
     return jsonify(response)
 
+@app.route('/compra/<int:id>', methods=['GET'])
+def get_compra(id):
+    compraEncontrado: Compra = compra_repository.find(id)
+    result = []
+    for key, group in groupby(compraEncontrado, lambda x: x[0]):
+        compra = {
+            "id_compra": key.id,
+            "fornecedor": key.fornecedor,
+            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
+            "produto": []
+        }
+        for item in group:
+            compra["produto"].append({
+                "id_produto": item[2].id,
+                "descricao": item[2].descricao,
+                "quantidade": float(item[1].quantidade),
+                "vl_unidade": float(item[1].vl_unidade),
+                "vl_total": float(item[1].vl_total)
+            })
+        result.append(compra)
+    response = jsonify(result)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/compra', methods=['GET'])
+def get_compras():
+    compras = compra_repository.findAll()
+    result = []
+    for key, group in groupby(compras, lambda x: x[0]):
+        compra = {
+            "id_compra": key.id,
+            "fornecedor": key.fornecedor,
+            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
+            "produto": []
+        }
+        for item in group:
+            compra["produto"].append({
+                "id_produto": item[2].id,
+                "descricao": item[2].descricao,
+                "quantidade": float(item[1].quantidade),
+                "vl_unidade": float(item[1].vl_unidade),
+                "vl_total": float(item[1].vl_total)
+            })
+        result.append(compra)
+    response = jsonify(result)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 @app.route('/compra', methods=['POST'])
 def add_compra():
     fornecedor = request.json.get('fornecedor')
@@ -257,33 +305,66 @@ def add_compra():
     response.headers['Location'] = url_for('get_compra', id=result_compra.id)
     return response
 
-@app.route('/compra', methods=['GET'])
-def get_compras():
-    compras = compra_repository.findAll()
-    result = []
-    for key, group in groupby(compras, lambda x: x[0]):
-        compra = {
-            "id_compra": key.id,
-            "fornecedor": key.fornecedor,
-            "dt_compra": key.dt_compra.strftime('%d/%m/%Y'),
-            "produto": []
-        }
-        for item in group:
-            compra["produto"].append({
-                "id_produto": item[2].id,
-                "descricao": item[2].descricao,
-                "quantidade": float(item[1].quantidade),
-                "vl_unidade": float(item[1].vl_unidade),
-                "vl_total": float(item[1].vl_total)
-            })
-        result.append(compra)
-    response = jsonify(result)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+@app.route('/compra/<int:id>', methods=['PUT'])
+def update_compra(id):
+    compra_encontrado: Compra = compra_repository.find(id)
 
-@app.route('/compra/<int:id>', methods=['GET'])
-def get_compra(id):
-    return f"Id informado {id}"
+    if compra_encontrado is None:
+         abort(404, message="'Not Found")
+        
+    fornecedor = request.json.get('fornecedor')
+    dt_compra = request.json.get('dt_compra')
+    compra_produto = request.json.get('compra_produto')
+
+    if not fornecedor or not dt_compra or not compra_produto:
+            abort(400, message="'Dados incompletos.")
+
+    compra_encontrado.fornecedor = fornecedor
+    compra_encontrado.dt_compra = dt_compra
+
+    result = compra_repository.update(id, compra_encontrado)
+
+    if result == True:
+        for item in compra_produto:
+            id_produto = item['produto']['id_produto']
+            descricao = item['produto']['descricao']
+
+            quantidade = item['quantidade']
+            vl_unidade = item['vl_unidade']
+            vl_total = item['vl_total']
+
+            if not quantidade:
+                abort(400, message="O campo 'quantidade' é obrigatório.")
+
+            if vl_total is not None and vl_unidade is None:
+                vl_unidade = vl_total / quantidade
+
+            if vl_unidade is not None and vl_total is None:
+                vl_total = vl_unidade * quantidade
+
+            nova_compra_produto = CompraProduto()
+            nova_compra_produto.id_compra = id
+            nova_compra_produto.id_produto = id_produto
+            nova_compra_produto.quantidade = quantidade
+            nova_compra_produto.vl_unidade = vl_unidade
+            nova_compra_produto.vl_total = vl_total
+
+            result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
+
+            #Validando se deu certo a operação
+            if result is None:
+                abort(400, 'Error ao cadastrar compra x produto')
+        return Response(status=204)
+    else:
+        abort(400, 'Error')
+
+@app.route('/compra/<int:id>', methods=['DELETE'])
+def delete_compra(id):
+    result = compra_repository.destroy(id)
+    if result == True:
+        return Response(status=204)
+    else:
+        abort(400, 'Error')
 
 
 @app.route('/venda/<int:id>', methods=['GET'])
@@ -294,7 +375,7 @@ def get_venda(id):
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
             'nm_cliente': vendaEncontrado.nm_cliente,
-            'dt_venda': vendaEncontrado.dt_venda,
+            'dt_venda': vendaEncontrado.dt_venda.strftime('%Y-%m-%d'),
             "venda_produto": []
         }
         for vendaProdutos in vendaEncontrado.vendaProdutos:
@@ -330,7 +411,6 @@ def get_venda(id):
     else:
        abort(400, 'Error')
 
-
 @app.route('/venda', methods=['GET'])
 def get_vendas():
     vendas: Venda = venda_repository.findAll()
@@ -341,7 +421,7 @@ def get_vendas():
             venda_serializado = {
                 'id_venda': venda.id,
                 'nm_cliente': venda.nm_cliente,
-                'dt_venda': venda.dt_venda,
+                'dt_venda': venda.dt_venda.strftime('%Y-%m-%d'),
                 "venda_produto": []
             }
             for vendaProdutos in venda.vendaProdutos:
@@ -412,3 +492,48 @@ def add_venda():
     response.status_code = 201
     response.headers['Location'] = url_for('get_venda', id=result_venda.id)
     return response
+
+@app.route('/venda/<int:id>', methods=['PUT'])
+def update_venda(id):
+    venda_encontrado: Venda = venda_repository.find(id)
+
+    if venda_encontrado is None:
+         abort(404, message="'Not Found")
+
+    nm_cliente: str = request.json.get('nm_cliente')
+    dt_venda: datetime = request.json.get('dt_venda')
+    venda_produto = request.json.get('venda_produto')
+
+    venda_encontrado.nm_cliente = nm_cliente
+    venda_encontrado.dt_venda = dt_venda
+
+    result = venda_repository.update(id, venda_encontrado)
+
+    if result == True:
+        for item in venda_produto:
+            id_produto = item['id_produto']
+            quantidade = item['quantidade']
+            preco_unidade = item['preco_unidade']
+
+            nova_venda_produto = VendaProduto()
+            nova_venda_produto.id_venda = id
+            nova_venda_produto.id_produto = id_produto
+            nova_venda_produto.quantidade = quantidade
+            nova_venda_produto.preco_unidade = preco_unidade
+
+            result: VendaProduto = venda_produto_repository.create(nova_venda_produto)
+
+            #Validando se deu certo a operação
+            if result is None:
+                abort(400, 'Error ao atualizar venda x produto')
+        return Response(status=204)
+    else:
+        abort(400, 'Error')
+
+@app.route('/venda/<int:id>', methods=['DELETE'])
+def delete_venda(id):
+    result = venda_repository.destroy(id)
+    if result == True:
+        return Response(status=204)
+    else:
+        abort(400, 'Error')
