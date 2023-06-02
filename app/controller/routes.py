@@ -31,8 +31,15 @@ def get_product(id):
             'marca':produtoEncontrado.marca,
             'qtd_estoque':produtoEncontrado.qtd_estoque,
             'preco':produtoEncontrado.preco,
-            'id_unidade_medida':produtoEncontrado.id_unidade_medida,
-            'id_tipo_produto':produtoEncontrado.id_tipo_produto
+            'unidade_medida': {
+                'id_unidade_medida':produtoEncontrado.unidade_medida.id,
+                'descricao':produtoEncontrado.unidade_medida.descricao,
+                'simbolo':produtoEncontrado.unidade_medida.simbolo,
+            },
+            'tipo_produto': {
+                'id_tipo_produto':produtoEncontrado.tipo_produto.id,
+                'descricao':produtoEncontrado.tipo_produto.descricao,
+            }
         }
 
         return jsonify(produto)
@@ -130,7 +137,7 @@ def update_product(id):
     result = produto_repository.update(id, produto_encontrado)
 
     if result == True:
-        return Response(status=204)
+        return Response(status=200)
     else:
         abort(400, 'Error')
 
@@ -311,7 +318,7 @@ def update_compra(id):
 
     if compra_encontrado is None:
          abort(404, message="'Not Found")
-        
+
     fornecedor = request.json.get('fornecedor')
     dt_compra = request.json.get('dt_compra')
     compra_produto = request.json.get('compra_produto')
