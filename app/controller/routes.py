@@ -119,20 +119,29 @@ def add_product():
 @app.route('/produto/<int:id>', methods=['PUT'])
 def update_product(id):
     produto_encontrado: Produto = produto_repository.find(id)
-
     descricao = request.json.get('descricao')
     marca = request.json.get('marca')
     qtd_estoque = request.json.get('qtd_estoque')
     preco = request.json.get('preco')
-    id_unidade_medida = request.json.get('id_unidade_medida')
-    id_tipo_produto = request.json.get('id_tipo_produto')
+    unidade_medida = request.json.get('unidade_medida')
+    tipo_produto = request.json.get('tipo_produto')
 
-    produto_encontrado.descricao = descricao
-    produto_encontrado.qtd_estoque = qtd_estoque
-    produto_encontrado.id_unidade_medida = id_unidade_medida
-    produto_encontrado.id_tipo_produto = id_tipo_produto
-    produto_encontrado.marca = marca
-    produto_encontrado.preco = preco
+    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
+    if tipoProdutoEncontrado is not None:
+        if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
+            produto_encontrado.descricao = descricao
+            produto_encontrado.qtd_estoque = qtd_estoque
+            produto_encontrado.id_unidade_medida = unidade_medida['id_unidade_medida']
+            produto_encontrado.id_tipo_produto = tipo_produto['id_tipo_produto']
+            produto_encontrado.marca = marca
+            produto_encontrado.preco = None
+        else:
+            produto_encontrado.descricao = descricao
+            produto_encontrado.qtd_estoque = qtd_estoque
+            produto_encontrado.id_unidade_medida = unidade_medida['id_unidade_medida']
+            produto_encontrado.id_tipo_produto = tipo_produto['id_tipo_produto']
+            produto_encontrado.marca = None
+            produto_encontrado.preco = preco
 
     result = produto_repository.update(id, produto_encontrado)
 
