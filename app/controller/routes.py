@@ -83,25 +83,25 @@ def add_product():
     marca = request.json.get('marca')
     qtd_estoque = request.json.get('qtd_estoque')
     preco = request.json.get('preco')
-    unidade_medida = request.json.get('unidade_medida')
-    tipo_produto = request.json.get('tipo_produto')
+    unidade_medida = request.json.get('unidadeMedida')
+    tipo_produto = request.json.get('tipoProduto')
 
     novo_produto = Produto()
 
     #Criando objeto
-    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
+    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['idTipoProduto'])
     if tipoProdutoEncontrado is not None:
         if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
             novo_produto.descricao = descricao
             novo_produto.qtd_estoque = qtd_estoque
-            novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
-            novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
+            novo_produto.id_unidade_medida = unidade_medida['idUnidadeMedida']
+            novo_produto.id_tipo_produto = tipo_produto['idTipoProduto']
             novo_produto.marca = marca
         else:
             novo_produto.descricao = descricao
             novo_produto.qtd_estoque = qtd_estoque
-            novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
-            novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
+            novo_produto.id_unidade_medida = unidade_medida['idUnidadeMedida']
+            novo_produto.id_tipo_produto = tipo_produto['idTipoProduto']
             novo_produto.preco = preco
 
     #Inserindo dado no banco de dados
