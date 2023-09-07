@@ -109,6 +109,27 @@ class CompraRepository(RepositoryBase):
 
         return list
 
+    def checkAssociatedProduct(self, id_produto):
+        result = False
+
+        item = db.session.query(Compra, CompraProduto, Produto).join(
+                CompraProduto, CompraProduto.id_compra == Compra.id).join(
+                Produto, Produto.id == CompraProduto.id_produto
+            ).filter(Produto.id == id_produto).first()
+
+        if item is not None:
+            result = True
+
+        return result
+
+    def searchCompraProductId(self, id_produto):
+        list = db.session.query(Compra, CompraProduto, Produto).join(
+                CompraProduto, CompraProduto.id_compra == Compra.id).join(
+                Produto, Produto.id == CompraProduto.id_produto
+            ).filter(Produto.id == id_produto).all()
+
+        return list
+
 class CompraProdutoRepository(RepositoryBase):
 
     def __init__(self):
@@ -118,6 +139,28 @@ class VendaRepository(RepositoryBase):
 
     def __init__(self):
         super().__init__(Venda)
+
+    def checkAssociatedProduct(self, id_produto):
+        result = False
+
+        item = db.session.query(Venda, VendaProduto, Produto).join(
+                VendaProduto, VendaProduto.id_venda == Venda.id).join(
+                Produto, Produto.id == VendaProduto.id_produto
+            ).filter(Produto.id == id_produto).first()
+
+        if item is not None:
+            result = True
+
+        return result
+
+    def searchVendaProductId(self, id_produto):
+        list = db.session.query(Venda, VendaProduto, Produto).join(
+                VendaProduto, VendaProduto.id_venda == Venda.id).join(
+                Produto, Produto.id == VendaProduto.id_produto
+            ).filter(Produto.id == id_produto).all()
+
+        return list
+
 
 class VendaProdutoRepository(RepositoryBase):
 

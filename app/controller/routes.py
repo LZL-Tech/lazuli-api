@@ -152,6 +152,12 @@ def update_product(id):
 
 @app.route('/produto/<int:id>', methods=['DELETE'])
 def delete_product(id):
+    if compra_repository.checkAssociatedProduct(id) == True:
+        return jsonify({"message": "Não é possível excluir o produto, pois está associado a compra."}), 409
+
+    if venda_repository.checkAssociatedProduct(id) == True:
+        return jsonify({"message": "Não é possível excluir o produto, pois está associado a venda."}), 409
+
     result = produto_repository.destroy(id)
     if result == True:
         return Response(status=204)
@@ -382,6 +388,30 @@ def delete_compra(id):
     else:
         abort(400, 'Error')
 
+@app.route('/compra/produto/<int:id>', methods=['GET'])
+def searchCompraProductId(id):
+    compras = compra_repository.searchCompraProductId(id)
+    result = []
+    for key, group in groupby(compras, lambda x: x[0]):
+        compra = {
+            "id_compra": key.id,
+            "fornecedor": key.fornecedor,
+            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
+            "produto": []
+        }
+        for item in group:
+            compra["produto"].append({
+                "id_produto": item[2].id,
+                "descricao": item[2].descricao,
+                "quantidade": float(item[1].quantidade),
+                "vl_unidade": float(item[1].vl_unidade),
+                "vl_total": float(item[1].vl_total)
+            })
+        result.append(compra)
+
+    response = jsonify(result)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route('/venda/<int:id>', methods=['GET'])
 def get_venda(id):
@@ -553,3 +583,48 @@ def delete_venda(id):
         return Response(status=204)
     else:
         abort(400, 'Error')
+
+@app.route('/venda/produto/<int:id>', methods=['GET'])
+def searchVendaProductId(id):
+    vendas = venda_repository.searchVendaProductId(id)
+    serializados = []
+
+    if len(vendas) > 0:
+        for key, group in groupby(vendas, lambda x: x[0]):
+            venda_serializado = {
+                'id_venda': key.id,
+                'nm_cliente': key.nm_cliente,
+                'dt_venda': key.dt_venda.strftime('%Y-%m-%d'),
+                "venda_produto": []
+            }
+            for item in group: #venda.vendaProdutos:
+                venda_serializado["venda_produto"].append({
+                    "id_venda_produto": item[1].id,
+                    "id_produto": item[1].id_produto,
+                    "id_venda": item[1].id_venda,
+                    "preco_unidade": float(item[1].preco_unidade),
+                    "quantidade": item[1].quantidade,
+                    "produto": {
+                        'id_produto': item[2].id,
+                        'descricao': item[2].descricao,
+                        'marca': item[2].marca,
+                        'qtd_estoque': item[2].qtd_estoque,
+                        'preco': item[2].preco,
+                        'id_unidade_medida': item[2].id_unidade_medida,
+                        'id_tipo_produto': item[2].id_tipo_produto,
+                        'tipo_produto': {
+                            'id_tipo_produto': item[2].tipo_produto.id,
+                            'descricao': item[2].tipo_produto.descricao
+                        },
+                        'unidade_medida': {
+                            'id_unidade_medida':item[2].unidade_medida.id,
+                            'descricao': item[2].unidade_medida.descricao,
+                            'simbolo': item[2].unidade_medida.simbolo
+                        }
+                    }
+                })
+            serializados.append(venda_serializado)
+
+    response = jsonify(serializados)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
