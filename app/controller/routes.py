@@ -416,7 +416,6 @@ def searchCompraProductId(id):
 @app.route('/venda/<int:id>', methods=['GET'])
 def get_venda(id):
     vendaEncontrado: Venda = venda_repository.find(id)
-    serializados = []
     if vendaEncontrado is not None:
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
@@ -449,9 +448,8 @@ def get_venda(id):
                     }
                 }
             })
-        serializados.append(venda_serializado)
 
-        response = jsonify(serializados)
+        response = jsonify(venda_serializado)
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     else:
