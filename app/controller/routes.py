@@ -546,33 +546,42 @@ def update_venda(id):
 
     nm_cliente: str = request.json.get('nm_cliente')
     dt_venda: datetime = request.json.get('dt_venda')
-    venda_produto = request.json.get('venda_produto')
+    venda_produto: VendaProduto = request.json.get('venda_produto')
 
     venda_encontrado.nm_cliente = nm_cliente
     venda_encontrado.dt_venda = dt_venda
 
     result = venda_repository.update(id, venda_encontrado)
 
+    venda_produto_encontrado: VendaProduto = venda_produto_repository.findByVendaId(id)
+
     if result == True:
+
+        itens_para_remover = [item for item in venda_produto_encontrado if item not in venda_produto]
+        for item in itens_para_remover:
+           venda_produto_repository.destroy(item.id)
+
         for item in venda_produto:
-            id_produto = item['id_produto']
-            quantidade = item['quantidade']
-            preco_unidade = item['preco_unidade']
+            vpe_item = next((item2 for item2 in venda_produto_encontrado if item['id_produto'] == item2.id_produto
+            and item['quantidade'] == item2.quantidade and item['preco_unidade'] == item2.preco_unidade), None)
+            if vpe_item:
+                vpe_item.id_produto = item['id_produto']
+                vpe_item.quantidade =  item['quantidade']
+                vpe_item.preco_unidade = item['preco_unidade']
 
-            nova_venda_produto = VendaProduto()
-            nova_venda_produto.id_venda = id
-            nova_venda_produto.id_produto = id_produto
-            nova_venda_produto.quantidade = quantidade
-            nova_venda_produto.preco_unidade = preco_unidade
+                result = venda_produto_repository.update(vpe_item.id, vpe_item)
+            else:
+                nova_venda_produto = VendaProduto()
+                nova_venda_produto.id_venda = id
+                nova_venda_produto.id_produto = item['id_produto']
+                nova_venda_produto.quantidade = item['quantidade']
+                nova_venda_produto.preco_unidade = item['preco_unidade']
 
-            result: VendaProduto = venda_produto_repository.create(nova_venda_produto)
+                result_venda_produto: VendaProduto = venda_produto_repository.create(nova_venda_produto)
 
-            #Validando se deu certo a operação
-            if result is None:
-                abort(400, 'Error ao atualizar venda x produto')
         return Response(status=204)
     else:
-        abort(400, 'Error')
+        abort(400, 'Error ao atualizar venda x produto')
 
 @app.route('/venda/<int:id>', methods=['DELETE'])
 def delete_venda(id):
