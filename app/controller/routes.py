@@ -429,6 +429,7 @@ def get_venda(id):
                 "id_produto": vendaProdutos.id_produto,
                 "id_venda": vendaProdutos.id_venda,
                 "preco_unidade": float(vendaProdutos.preco_unidade),
+                "quantidade": vendaProdutos.quantidade,
                 "produto": {
                     'id_produto': vendaProdutos.produto.id,
                     'descricao': vendaProdutos.produto.descricao,
