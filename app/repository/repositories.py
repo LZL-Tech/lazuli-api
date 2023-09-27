@@ -166,3 +166,11 @@ class VendaProdutoRepository(RepositoryBase):
 
     def __init__(self):
         super().__init__(VendaProduto)
+
+    def findByVendaId(self, id):
+        try:
+            venda_produto: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id)
+            return venda_produto
+        except Exception as ex:
+            log.error(ex)
+            return None
