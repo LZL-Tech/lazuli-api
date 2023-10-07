@@ -174,3 +174,19 @@ class VendaProdutoRepository(RepositoryBase):
         except Exception as ex:
             log.error(ex)
             return None
+        
+
+    def destroyByVendaId(self, id):
+        try:
+            itens: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id).all()
+            if itens is not None:
+                for item_delete in itens:
+                    db.session.delete(item_delete)
+                    db.session.commit()
+                return True
+            else:
+                return False
+        except Exception as ex:
+            db.session.rollback()
+            log.error(ex)
+            return False
