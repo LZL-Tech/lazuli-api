@@ -583,14 +583,18 @@ def update_venda(id):
         return Response(status=204)
     else:
         abort(400, 'Error ao atualizar venda x produto')
-
+    
 @app.route('/venda/<int:id>', methods=['DELETE'])
 def delete_venda(id):
-    result = venda_repository.destroy(id)
-    if result == True:
-        return Response(status=204)
+    result_vendaProduto = venda_produto_repository.destroyByVendaId(id)
+    if result_vendaProduto == True:
+        result = venda_repository.destroy(id)
+        if result == True:
+            return Response(status=204)
+        else:
+            abort(400, 'Error')
     else:
-        abort(400, 'Error')
+         abort(400, 'Error')
 
 @app.route('/venda/produto/<int:id>', methods=['GET'])
 def searchVendaProductId(id):
