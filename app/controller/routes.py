@@ -382,11 +382,19 @@ def update_compra(id):
 
 @app.route('/compra/<int:id>', methods=['DELETE'])
 def delete_compra(id):
-    result = compra_repository.destroy(id)
-    if result == True:
-        return Response(status=204)
+    result_find = compra_produto_repository.findByCompraId(id)
+    if result_find is None:
+        abort(404, 'Compra não encontrada!')
+
+    result_compraProduto = compra_produto_repository.destroyByCompraId(id)
+    if result_compraProduto == True:
+        result = compra_repository.destroy(id)
+        if result == True:
+            return Response(status=204)
+        else:
+            abort(400, 'Error')
     else:
-        abort(400, 'Error')
+         abort(400, 'Error')
 
 @app.route('/compra/produto/<int:id>', methods=['GET'])
 def searchCompraProductId(id):
@@ -454,7 +462,7 @@ def get_venda(id):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     else:
-       abort(400, 'Error')
+       abort(404, 'Error')
 
 @app.route('/venda', methods=['GET'])
 def get_vendas():
@@ -586,6 +594,10 @@ def update_venda(id):
     
 @app.route('/venda/<int:id>', methods=['DELETE'])
 def delete_venda(id):
+    result_find = venda_produto_repository.findByVendaId(id)
+    if result_find is None:
+        abort(404, 'Venda não encontrada!')
+
     result_vendaProduto = venda_produto_repository.destroyByVendaId(id)
     if result_vendaProduto == True:
         result = venda_repository.destroy(id)
