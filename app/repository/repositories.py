@@ -2,6 +2,7 @@ from app import db, joinedload
 from repository.interfaces import IRepository
 from domain.models import *
 import logging as log
+from typing import List
 
 class RepositoryBase(IRepository):
     def __init__(self, classe):
@@ -26,7 +27,7 @@ class RepositoryBase(IRepository):
             return None
 
     def update(self, id, obj):
-        item = self.find(id)
+        item = self.classe.query.get(id)
         if item is not None:
             for key, value in obj.__dict__.items():
                 if key != '_sa_instance_state':
@@ -36,7 +37,7 @@ class RepositoryBase(IRepository):
         return False
 
     def destroy(self, id):
-        item = self.find(id)
+        item = self.classe.query.get(id)
         if item is not None:
             try:
                 db.session.delete(item)
@@ -135,6 +136,32 @@ class CompraProdutoRepository(RepositoryBase):
     def __init__(self):
         super().__init__(CompraProduto)
 
+    def findByCompraId(self, id):
+        try:
+            compra_produto: VendaProduto = db.session.query(CompraProduto).filter_by(id_compra=id).first()
+            if compra_produto:
+                return compra_produto
+            else:
+                return None
+        except Exception as ex:
+            log.error(ex)
+            return None
+        
+    def destroyByCompraId(self, id):
+        try:
+            itens: List[CompraProduto] = db.session.query(CompraProduto).filter_by(id_compra=id).all()
+            if len(itens) > 0:
+                for item_delete in itens:
+                    db.session.delete(item_delete)
+                    db.session.commit()
+                return True
+            else:
+                return False
+        except Exception as ex:
+            db.session.rollback()
+            log.error(ex)
+            return False 
+
 class VendaRepository(RepositoryBase):
 
     def __init__(self):
@@ -161,7 +188,6 @@ class VendaRepository(RepositoryBase):
 
         return list
 
-
 class VendaProdutoRepository(RepositoryBase):
 
     def __init__(self):
@@ -169,17 +195,19 @@ class VendaProdutoRepository(RepositoryBase):
 
     def findByVendaId(self, id):
         try:
-            venda_produto: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id)
-            return venda_produto
+            venda_produto: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id).first()
+            if venda_produto:
+                return venda_produto
+            else:
+                return None
         except Exception as ex:
             log.error(ex)
             return None
         
-
     def destroyByVendaId(self, id):
         try:
-            itens: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id).all()
-            if itens is not None:
+            itens: List[VendaProduto] = db.session.query(VendaProduto).filter_by(id_venda=id).all()
+            if len(itens) > 0:
                 for item_delete in itens:
                     db.session.delete(item_delete)
                     db.session.commit()
