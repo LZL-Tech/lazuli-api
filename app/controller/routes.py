@@ -329,7 +329,8 @@ def add_compra():
 
 @app.route('/compra/<int:id>', methods=['PUT'])
 def update_compra(id):
-    compra_encontrado: Compra = compra_repository.find(id)
+    data = compra_repository.find(id)
+    compra_encontrado: Compra = data.Compra
 
     if compra_encontrado is None:
          abort(404, message="'Not Found")
@@ -351,13 +352,13 @@ def update_compra(id):
 
     result = compra_repository.update(id, compra_encontrado)
 
-    compra_produto_encontrado: CompraProduto = compra_produto_repository.findByVendaId(id)
+    compra_produto_encontrado = compra_produto_repository.findByCompraId(id)
 
     if result == True:
 
         itens_para_remover = [item for item in compra_produto_encontrado if item not in compra_produto]
         for item in itens_para_remover:
-           compra_produto_encontrado.destroy(item.id)
+           compra_produto_repository.destroy(item.id)
 
         for item in compra_produto:
             id_produto = item['produto']['id_produto']
@@ -568,7 +569,7 @@ def update_venda(id):
 
     result = venda_repository.update(id, venda_encontrado)
 
-    venda_produto_encontrado: VendaProduto = venda_produto_repository.findByVendaId(id)
+    venda_produto_encontrado = venda_produto_repository.findByVendaId(id)
 
     if result == True:
 

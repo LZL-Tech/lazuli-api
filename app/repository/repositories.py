@@ -98,7 +98,7 @@ class CompraRepository(RepositoryBase):
         item = db.session.query(Compra, CompraProduto, Produto).join(
                 CompraProduto, CompraProduto.id_compra == Compra.id).join(
                 Produto, Produto.id == CompraProduto.id_produto
-            ).filter(Compra.id == id).all()
+            ).filter(Compra.id == id).first()
 
         return item
 
@@ -138,9 +138,9 @@ class CompraProdutoRepository(RepositoryBase):
 
     def findByCompraId(self, id):
         try:
-            compra_produto: VendaProduto = db.session.query(CompraProduto).filter_by(id_compra=id).first()
-            if compra_produto:
-                return compra_produto
+            list_compra_produto: List[CompraProduto] = db.session.query(CompraProduto).filter_by(id_compra=id).all()
+            if list_compra_produto:
+                return list_compra_produto
             else:
                 return None
         except Exception as ex:
@@ -195,9 +195,9 @@ class VendaProdutoRepository(RepositoryBase):
 
     def findByVendaId(self, id):
         try:
-            venda_produto: VendaProduto = db.session.query(VendaProduto).filter_by(id_venda=id).first()
-            if venda_produto:
-                return venda_produto
+            list_venda_produto: List[VendaProduto] = db.session.query(VendaProduto).filter_by(id_venda=id).all()
+            if list_venda_produto:
+                return list_venda_produto
             else:
                 return None
         except Exception as ex:
