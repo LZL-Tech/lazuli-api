@@ -339,24 +339,31 @@ def update_compra(id):
     compra_produto = request.json.get('compra_produto')
 
     if not fornecedor or not dt_compra or not compra_produto:
-            abort(400, message="'Dados incompletos.")
+            abort(400, message="'Dados incompletos!")
+
+    for item in compra_produto:
+        quantidade = item['quantidade']
+        if not quantidade:
+            abort(400, message="O campo 'quantidade' do compra_produto é obrigatório.")
 
     compra_encontrado.fornecedor = fornecedor
     compra_encontrado.dt_compra = dt_compra
 
     result = compra_repository.update(id, compra_encontrado)
 
+    compra_produto_encontrado: CompraProduto = compra_produto_repository.findByVendaId(id)
+
     if result == True:
+
+        itens_para_remover = [item for item in compra_produto_encontrado if item not in compra_produto]
+        for item in itens_para_remover:
+           compra_produto_encontrado.destroy(item.id)
+
         for item in compra_produto:
             id_produto = item['produto']['id_produto']
-            descricao = item['produto']['descricao']
-
             quantidade = item['quantidade']
             vl_unidade = item['vl_unidade']
             vl_total = item['vl_total']
-
-            if not quantidade:
-                abort(400, message="O campo 'quantidade' é obrigatório.")
 
             if vl_total is not None and vl_unidade is None:
                 vl_unidade = vl_total / quantidade
@@ -373,7 +380,6 @@ def update_compra(id):
 
             result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
 
-            #Validando se deu certo a operação
             if result is None:
                 abort(400, 'Error ao cadastrar compra x produto')
         return Response(status=204)
