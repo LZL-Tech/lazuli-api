@@ -2,8 +2,8 @@ from app import app
 from flask import Response, abort, jsonify, request, url_for
 from itertools import groupby
 
-from models.compra import Compra
-from models.compraProduto import CompraProduto
+from models.compraModel import CompraModel
+from models.compraProdutoModel import CompraProdutoModel
 from repositories.compraRepository import CompraRepository
 from repositories.compraProdutoRepository import CompraProdutoRepository
 
@@ -12,7 +12,7 @@ compra_produto_repository = CompraProdutoRepository()
 
 @app.route('/compra/<int:id>', methods=['GET'])
 def get_compra(id):
-    compraEncontrado: Compra = compra_repository.find(id)
+    compraEncontrado: CompraModel = compra_repository.find(id)
     result = []
     for key, group in groupby(compraEncontrado, lambda x: x[0]):
         compra = {
@@ -67,11 +67,11 @@ def add_compra():
     if not fornecedor or not dt_compra or not compra_produto:
         abort(400, message="'Dados incompletos.")
 
-    nova_compra = Compra()
+    nova_compra = CompraModel()
     nova_compra.fornecedor = fornecedor
     nova_compra.dt_compra = dt_compra
 
-    result_compra: Compra = compra_repository.create(nova_compra)
+    result_compra: CompraModel = compra_repository.create(nova_compra)
 
     if result_compra is None:
         abort(400, 'Error ao cadastrar compra')
@@ -93,14 +93,14 @@ def add_compra():
         if vl_unidade is not None and vl_total is None:
             vl_total = vl_unidade * quantidade
 
-        nova_compra_produto = CompraProduto()
+        nova_compra_produto = CompraProdutoModel()
         nova_compra_produto.id_compra = result_compra.id
         nova_compra_produto.id_produto = id_produto
         nova_compra_produto.quantidade = quantidade
         nova_compra_produto.vl_unidade = vl_unidade
         nova_compra_produto.vl_total = vl_total
 
-        result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
+        result:CompraProdutoModel = compra_produto_repository.create(nova_compra_produto)
 
         #Validando se deu certo a operação
         if result is None:
@@ -114,7 +114,7 @@ def add_compra():
 @app.route('/compra/<int:id>', methods=['PUT'])
 def update_compra(id):
     data = compra_repository.find(id)
-    compra_encontrado: Compra = data.Compra
+    compra_encontrado: CompraModel = data.Compra
 
     if compra_encontrado is None:
          abort(404, message="'Not Found")
@@ -156,14 +156,14 @@ def update_compra(id):
             if vl_unidade is not None and vl_total is None:
                 vl_total = vl_unidade * quantidade
 
-            nova_compra_produto = CompraProduto()
+            nova_compra_produto = CompraProdutoModel()
             nova_compra_produto.id_compra = id
             nova_compra_produto.id_produto = id_produto
             nova_compra_produto.quantidade = quantidade
             nova_compra_produto.vl_unidade = vl_unidade
             nova_compra_produto.vl_total = vl_total
 
-            result:CompraProduto = compra_produto_repository.create(nova_compra_produto)
+            result:CompraProdutoModel = compra_produto_repository.create(nova_compra_produto)
 
             if result is None:
                 abort(400, 'Error ao cadastrar compra x produto')

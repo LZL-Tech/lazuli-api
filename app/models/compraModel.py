@@ -1,7 +1,7 @@
 from app import db
 import datetime
 
-class Compra(db.Model):
+class CompraModel(db.Model):
     __tablename__ = 'compra'
     id: int = db.Column('id_compra', db.Integer, primary_key=True, autoincrement=True)
     fornecedor: str = db.Column('fornecedor', db.String(255))

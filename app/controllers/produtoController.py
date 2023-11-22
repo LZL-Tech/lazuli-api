@@ -1,7 +1,7 @@
 from app import app
 from flask import Response, abort, jsonify, request, url_for
 
-from models.produto import Produto
+from models.produtoModel import ProdutoModel
 from repositories.produtoRepository import ProdutoRepository
 from repositories.tipoProdutoRepository import TipoProdutoRepository
 from repositories.compraRepository import CompraRepository
@@ -78,10 +78,10 @@ def add_product():
     unidade_medida = request.json.get('unidadeMedida')
     tipo_produto = request.json.get('tipoProduto')
 
-    novo_produto = Produto()
+    novo_produto = ProdutoModel()
 
     #Criando objeto
-    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['idTipoProduto'])
+    tipoProdutoEncontrado: ProdutoModel = tipo_produto_repository.find(tipo_produto['idTipoProduto'])
     if tipoProdutoEncontrado is not None:
         if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
             novo_produto.descricao = descricao
@@ -110,7 +110,7 @@ def add_product():
 
 @app.route('/produto/<int:id>', methods=['PUT'])
 def update_product(id):
-    produto_encontrado: Produto = produto_repository.find(id)
+    produto_encontrado: ProdutoModel = produto_repository.find(id)
     descricao = request.json.get('descricao')
     marca = request.json.get('marca')
     qtd_estoque = request.json.get('qtd_estoque')
@@ -118,7 +118,7 @@ def update_product(id):
     unidade_medida = request.json.get('unidade_medida')
     tipo_produto = request.json.get('tipo_produto')
 
-    tipoProdutoEncontrado: Produto = tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
+    tipoProdutoEncontrado: ProdutoModel = tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
     if tipoProdutoEncontrado is not None:
         if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
             produto_encontrado.descricao = descricao

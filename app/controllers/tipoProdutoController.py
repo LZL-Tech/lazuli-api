@@ -2,7 +2,7 @@ from app import app
 from flask import jsonify
 from typing import List
 
-from models.tipoProduto import TipoProduto
+from models.tipoProdutoModel import TipoProdutoModel
 from repositories.tipoProdutoRepository import TipoProdutoRepository
 
 
@@ -10,7 +10,7 @@ tipo_produto_repository = TipoProdutoRepository()
 
 @app.route('/tipo_produto', methods=['GET'])
 def get_tipo_produtos():
-    tipo_produtos: List[TipoProduto] = tipo_produto_repository.findAll()
+    tipo_produtos: List[TipoProdutoModel] = tipo_produto_repository.findAll()
     serializados = []
 
     if len(tipo_produtos) > 0:

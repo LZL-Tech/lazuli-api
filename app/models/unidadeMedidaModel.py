@@ -1,6 +1,6 @@
 from app import db
 
-class UnidadeMedida(db.Model):
+class UnidadeMedidaModel(db.Model):
     __tablename__ = 'unidade_medida'
     id: int = db.Column('id_unidade_medida', db.Integer, primary_key=True, autoincrement=True)
     descricao: str = db.Column('descricao', db.String(100))

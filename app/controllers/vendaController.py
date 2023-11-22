@@ -3,8 +3,8 @@ from app import app
 from flask import Response, abort, jsonify, request, url_for
 from itertools import groupby
 
-from models.venda import Venda
-from models.vendaProduto import VendaProduto
+from models.vendaModel import VendaModel
+from models.vendaProdutoModel import VendaProdutoModel
 from repositories.vendaProdutoRepository import VendaProdutoRepository
 from repositories.vendaRepository import VendaRepository
 
@@ -14,7 +14,7 @@ venda_produto_repository = VendaProdutoRepository()
 
 @app.route('/venda/<int:id>', methods=['GET'])
 def get_venda(id):
-    vendaEncontrado: Venda = venda_repository.find(id)
+    vendaEncontrado: VendaModel = venda_repository.find(id)
     if vendaEncontrado is not None:
         venda_serializado = {
             'id_venda': vendaEncontrado.id,
@@ -57,7 +57,7 @@ def get_venda(id):
 
 @app.route('/venda', methods=['GET'])
 def get_vendas():
-    vendas: Venda = venda_repository.findAll()
+    vendas: VendaModel = venda_repository.findAll()
     serializados = []
 
     if len(vendas) > 0:
@@ -106,11 +106,11 @@ def add_venda():
     dt_venda: datetime = request.json.get('dt_venda')
     venda_produto = request.json.get('venda_produto')
 
-    nova_venda = Venda()
+    nova_venda = VendaModel()
     nova_venda.nm_cliente = nm_cliente
     nova_venda.dt_venda = dt_venda
 
-    result_venda: Venda = venda_repository.create(nova_venda)
+    result_venda: VendaModel = venda_repository.create(nova_venda)
 
     if result_venda is None:
         abort(400, 'Error ao cadastrar venda')
@@ -120,13 +120,13 @@ def add_venda():
         quantidade = item['quantidade']
         preco_unidade = item['preco_unidade']
 
-        nova_venda_produto = VendaProduto()
+        nova_venda_produto = VendaProdutoModel()
         nova_venda_produto.id_venda = result_venda.id
         nova_venda_produto.id_produto = id_produto
         nova_venda_produto.quantidade = quantidade
         nova_venda_produto.preco_unidade = preco_unidade
 
-        result: VendaProduto = venda_produto_repository.create(nova_venda_produto)
+        result: VendaProdutoModel = venda_produto_repository.create(nova_venda_produto)
 
         #Validando se deu certo a operação
         if result is None:
@@ -139,14 +139,14 @@ def add_venda():
 
 @app.route('/venda/<int:id>', methods=['PUT'])
 def update_venda(id):
-    venda_encontrado: Venda = venda_repository.find(id)
+    venda_encontrado: VendaModel = venda_repository.find(id)
 
     if venda_encontrado is None:
          abort(404, message="'Not Found")
 
     nm_cliente: str = request.json.get('nm_cliente')
     dt_venda: datetime = request.json.get('dt_venda')
-    venda_produto: VendaProduto = request.json.get('venda_produto')
+    venda_produto: VendaProdutoModel = request.json.get('venda_produto')
 
     venda_encontrado.nm_cliente = nm_cliente
     venda_encontrado.dt_venda = dt_venda
@@ -171,13 +171,13 @@ def update_venda(id):
 
                 result = venda_produto_repository.update(vpe_item.id, vpe_item)
             else:
-                nova_venda_produto = VendaProduto()
+                nova_venda_produto = VendaProdutoModel()
                 nova_venda_produto.id_venda = id
                 nova_venda_produto.id_produto = item['id_produto']
                 nova_venda_produto.quantidade = item['quantidade']
                 nova_venda_produto.preco_unidade = item['preco_unidade']
 
-                result_venda_produto: VendaProduto = venda_produto_repository.create(nova_venda_produto)
+                result_venda_produto: VendaProdutoModel = venda_produto_repository.create(nova_venda_produto)
 
         return Response(status=204)
     else:

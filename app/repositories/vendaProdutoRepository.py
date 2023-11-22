@@ -2,18 +2,18 @@ from app import db
 from typing import List
 import logging as log
 
-from models.vendaProduto import VendaProduto
+from models.vendaProdutoModel import VendaProdutoModel
 
 from repositories.baseRepository import BaseRepository
 
 
 class VendaProdutoRepository(BaseRepository):
     def __init__(self):
-        super().__init__(VendaProduto)
+        super().__init__(VendaProdutoModel)
 
     def findByVendaId(self, id):
         try:
-            list_venda_produto: List[VendaProduto] = (db.session.query(VendaProduto)
+            list_venda_produto: List[VendaProdutoModel] = (db.session.query(VendaProdutoModel)
                                                       .filter_by(id_venda=id)
                                                       .all())
             if list_venda_produto:
@@ -26,7 +26,7 @@ class VendaProdutoRepository(BaseRepository):
         
     def destroyByVendaId(self, id):
         try:
-            itens: List[VendaProduto] = (db.session.query(VendaProduto)
+            itens: List[VendaProdutoModel] = (db.session.query(VendaProdutoModel)
                                          .filter_by(id_venda=id)
                                          .all())
             if len(itens) > 0:
