@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
 app.config.from_pyfile('config/config.py')
@@ -9,7 +8,16 @@ cors = CORS(app)
 
 db = SQLAlchemy(app)
 
-from controller.routes import *
+@app.route('/')
+@app.route('/home')
+def index():
+    return "Lazuli API V1"
+
+from controllers.produtoController import *
+from controllers.tipoProdutoController import *
+from controllers.unidadeMedidaController import *
+from controllers.compraController import *
+from controllers.vendaController import *
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
