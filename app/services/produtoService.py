@@ -1,6 +1,3 @@
-from app import db
-import logging as log
-
 from models.produtoModel import ProdutoModel
 from repositories.produtoRepository import ProdutoRepository
 from repositories.tipoProdutoRepository import TipoProdutoRepository

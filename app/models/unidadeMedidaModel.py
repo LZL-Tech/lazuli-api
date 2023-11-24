@@ -5,3 +5,12 @@ class UnidadeMedidaModel(db.Model):
     id: int = db.Column('id_unidade_medida', db.Integer, primary_key=True, autoincrement=True)
     descricao: str = db.Column('descricao', db.String(100))
     simbolo: str = db.Column('simbolo', db.String(10))
+
+    def to_dict(self):
+        unidadeMedida = {
+            'id_unidade_medida': self.id,
+            'descricao': self.descricao,
+            'simbolo': self.simbolo
+        }
+
+        return unidadeMedida

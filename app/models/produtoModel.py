@@ -25,15 +25,8 @@ class ProdutoModel(db.Model):
             'marca':self.marca,
             'qtd_estoque':self.qtd_estoque,
             'preco':self.preco,
-            'unidade_medida': {
-                'id_unidade_medida':self.unidade_medida.id,
-                'descricao':self.unidade_medida.descricao,
-                'simbolo':self.unidade_medida.simbolo,
-            },
-            'tipo_produto': {
-                'id_tipo_produto':self.tipo_produto.id,
-                'descricao':self.tipo_produto.descricao,
-            }
+            'unidade_medida': self.unidade_medida.to_dict(),
+            'tipo_produto': self.tipo_produto.to_dict()
         }
 
         return produto
