@@ -16,3 +16,24 @@ class ProdutoModel(db.Model):
     tipo_produto: TipoProdutoModel  = db.relationship(TipoProdutoModel)
     unidade_medida: UnidadeMedidaModel = db.relationship(UnidadeMedidaModel)
     vendaProdutos = db.relationship("VendaProdutoModel", back_populates="produto")
+
+
+    def to_dict(self):
+        produto = {
+            'id_produto': self.id,
+            'descricao': self.descricao,
+            'marca':self.marca,
+            'qtd_estoque':self.qtd_estoque,
+            'preco':self.preco,
+            'unidade_medida': {
+                'id_unidade_medida':self.unidade_medida.id,
+                'descricao':self.unidade_medida.descricao,
+                'simbolo':self.unidade_medida.simbolo,
+            },
+            'tipo_produto': {
+                'id_tipo_produto':self.tipo_produto.id,
+                'descricao':self.tipo_produto.descricao,
+            }
+        }
+
+        return produto
