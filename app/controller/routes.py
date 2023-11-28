@@ -229,26 +229,30 @@ def get_unidades_medidas():
 @app.route('/compra/<int:id>', methods=['GET'])
 def get_compra(id):
     compraEncontrado: Compra = compra_repository.find(id)
-    result = []
-    for key, group in groupby(compraEncontrado, lambda x: x[0]):
+    if compraEncontrado is not None:
         compra = {
-            "id_compra": key.id,
-            "fornecedor": key.fornecedor,
-            "dt_compra": key.dt_compra.strftime('%Y-%m-%d'),
+            "id_compra": compraEncontrado.id,
+            "fornecedor": compraEncontrado.fornecedor,
+            "dt_compra": compraEncontrado.dt_compra.strftime('%Y-%m-%d'),
             "produto": []
         }
-        for item in group:
+        produtos = compra_produto_repository.findByCompraId(id)
+        for produto in produtos:
             compra["produto"].append({
-                "id_produto": item[2].id,
-                "descricao": item[2].descricao,
-                "quantidade": float(item[1].quantidade),
-                "vl_unidade": float(item[1].vl_unidade),
-                "vl_total": float(item[1].vl_total)
+                "id_compra_produto": produto.id,
+                "id_produto": produto.id_produto,
+                "descricao": produto.produto.descricao,
+                "id_compra": produto.id_compra,
+                "quantidade": float(produto.quantidade),
+                "vl_unidade": float(produto.vl_unidade),
+                "vl_total": float(produto.vl_total),
             })
-        result.append(compra)
-    response = jsonify(result)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+
+        response = jsonify(compra)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    else:
+        abort(404, 'Error')
 
 @app.route('/compra', methods=['GET'])
 def get_compras():
@@ -329,8 +333,7 @@ def add_compra():
 
 @app.route('/compra/<int:id>', methods=['PUT'])
 def update_compra(id):
-    data = compra_repository.find(id)
-    compra_encontrado: Compra = data.Compra
+    compra_encontrado: Compra = compra_repository.find(id)
 
     if compra_encontrado is None:
          abort(404, message="'Not Found")
@@ -340,7 +343,7 @@ def update_compra(id):
     compra_produto = request.json.get('compra_produto')
 
     if not fornecedor or not dt_compra or not compra_produto:
-            abort(400, message="'Dados incompletos!")
+        abort(400, message="'Dados incompletos!")
 
     for item in compra_produto:
         quantidade = item['quantidade']
@@ -598,7 +601,7 @@ def update_venda(id):
         return Response(status=204)
     else:
         abort(400, 'Error ao atualizar venda x produto')
-    
+
 @app.route('/venda/<int:id>', methods=['DELETE'])
 def delete_venda(id):
     result_find = venda_produto_repository.findByVendaId(id)
