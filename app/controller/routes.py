@@ -241,6 +241,7 @@ def get_compra(id):
             compra["produto"].append({
                 "id_compra_produto": produto.id,
                 "id_produto": produto.id_produto,
+                "descricao": produto.produto.descricao,
                 "id_compra": produto.id_compra,
                 "quantidade": float(produto.quantidade),
                 "vl_unidade": float(produto.vl_unidade),
@@ -332,8 +333,7 @@ def add_compra():
 
 @app.route('/compra/<int:id>', methods=['PUT'])
 def update_compra(id):
-    data = compra_repository.find(id)
-    compra_encontrado: Compra = data.Compra
+    compra_encontrado: Compra = compra_repository.find(id)
 
     if compra_encontrado is None:
          abort(404, message="'Not Found")
@@ -343,7 +343,7 @@ def update_compra(id):
     compra_produto = request.json.get('compra_produto')
 
     if not fornecedor or not dt_compra or not compra_produto:
-            abort(400, message="'Dados incompletos!")
+        abort(400, message="'Dados incompletos!")
 
     for item in compra_produto:
         quantidade = item['quantidade']
