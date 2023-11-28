@@ -13,10 +13,10 @@ class ProdutoModel(db.Model):
     preco: decimal = db.Column('preco', db.Numeric(precision=8, scale=2), nullable=False)
     id_unidade_medida: int = db.Column(db.Integer, db.ForeignKey('unidade_medida.id_unidade_medida'), nullable=False)
     id_tipo_produto: int = db.Column(db.Integer, db.ForeignKey('tipo_produto.id_tipo_produto'), nullable=False)
-    tipo_produto: TipoProdutoModel  = db.relationship(TipoProdutoModel)
-    unidade_medida: UnidadeMedidaModel = db.relationship(UnidadeMedidaModel)
+    tipo_produto: TipoProdutoModel  = db.relationship("TipoProdutoModel", back_populates="produto")
+    unidade_medida: UnidadeMedidaModel = db.relationship("UnidadeMedidaModel", back_populates="produto")   
+    compraProdutos = db.relationship('CompraProdutoModel', back_populates='produto')
     vendaProdutos = db.relationship("VendaProdutoModel", back_populates="produto")
-
 
     def to_dict(self):
         produto = {

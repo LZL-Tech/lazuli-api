@@ -25,7 +25,8 @@ VALUES ('Ana Santos', '2023-08-10'),
 
 INSERT INTO compra (fornecedor, dt_compra)
 VALUES ('Distribuidora de Ingredientes ABC', '2023-08-05'),
-       ('Supermercado Ingredientes XYZ', '2023-08-12');
+       ('Supermercado Ingredientes XYZ', '2023-08-12'),
+       ('Supermercado Seu Zé', '2023-09-10');
 
 INSERT INTO venda_produto (id_produto, id_venda, quantidade, preco_unidade)
 VALUES (1, 1, 1, 45.00),

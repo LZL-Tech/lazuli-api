@@ -38,19 +38,19 @@ class ProdutoService:
 
         novo_produto = ProdutoModel()
 
-        tipoProdutoEncontrado: ProdutoModel = self.tipo_produto_repository.find(tipo_produto['idTipoProduto'])
+        tipoProdutoEncontrado: ProdutoModel = self.tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
         if tipoProdutoEncontrado is not None:
             if tipoProdutoEncontrado.descricao.upper() == 'INGREDIENTE':
                 novo_produto.descricao = descricao
                 novo_produto.qtd_estoque = qtd_estoque
-                novo_produto.id_unidade_medida = unidade_medida['idUnidadeMedida']
-                novo_produto.id_tipo_produto = tipo_produto['idTipoProduto']
+                novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
+                novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
                 novo_produto.marca = marca
             else:
                 novo_produto.descricao = descricao
                 novo_produto.qtd_estoque = qtd_estoque
-                novo_produto.id_unidade_medida = unidade_medida['idUnidadeMedida']
-                novo_produto.id_tipo_produto = tipo_produto['idTipoProduto']
+                novo_produto.id_unidade_medida = unidade_medida['id_unidade_medida']
+                novo_produto.id_tipo_produto = tipo_produto['id_tipo_produto']
                 novo_produto.preco = preco
 
             result = self.produto_repository.create(novo_produto)
@@ -65,8 +65,8 @@ class ProdutoService:
         marca = json.get('marca')
         qtd_estoque = json.get('qtd_estoque')
         preco = json.get('preco')
-        unidade_medida = json.get('unidade_medida')
-        tipo_produto = json.get('tipo_produto')
+        unidade_medida = json.get('unidadeMedida')
+        tipo_produto = json.get('tipoProduto')
 
         tipoProdutoEncontrado: ProdutoModel = self.tipo_produto_repository.find(tipo_produto['id_tipo_produto'])
         if tipoProdutoEncontrado is not None:
@@ -94,9 +94,14 @@ class ProdutoService:
 
         if self.venda_repository.checkAssociatedProduct(id) == True:
             self.listErrors.append("Não é possível excluir o produto, pois está associado a venda.")
-            return False     
-
-        return self.produto_repository.destroy(id)
+            return False    
+         
+        result = self.produto_repository.destroy(id)
+        if result == False:
+            self.listErrors.append("Error ao deletar o Produto")
+            return False
+        
+        return result
 
     def findAllSearch(self, args):
         id_tipo = args.get('id_tipo')

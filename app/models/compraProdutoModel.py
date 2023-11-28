@@ -12,5 +12,18 @@ class CompraProdutoModel(db.Model):
     quantidade: decimal = db.Column('quantidade', db.Numeric(precision=8, scale=2), nullable=False)
     vl_unidade: decimal = db.Column('vl_unidade', db.Numeric(precision=8, scale=2), nullable=False)
     vl_total: decimal = db.Column('vl_total', db.Numeric(precision=8, scale=2), nullable=False)
-    compra: CompraModel  = db.relationship(CompraModel)
-    produto: ProdutoModel = db.relationship(ProdutoModel)
+    produto: ProdutoModel = db.relationship("ProdutoModel", back_populates="compraProdutos")
+    compra: CompraModel = db.relationship("CompraModel", back_populates="compraProdutos")
+
+    def to_dict(self):
+        compraProduto = {
+            "id_compra_produto": self.id,
+            "id_compra": self.id_compra,
+            "id_produto": self.id_produto,
+            "quantidade": self.quantidade,
+            "vl_unidade": self.vl_unidade,
+            "vl_total": self.vl_total,
+            "produto": self.produto.to_dict()
+        }
+
+        return compraProduto
