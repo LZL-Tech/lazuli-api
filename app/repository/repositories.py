@@ -94,14 +94,6 @@ class CompraRepository(RepositoryBase):
     def __init__(self):
         super().__init__(Compra)
 
-    def find(self, id):
-        item = db.session.query(Compra, CompraProduto, Produto).join(
-                CompraProduto, CompraProduto.id_compra == Compra.id).join(
-                Produto, Produto.id == CompraProduto.id_produto
-            ).filter(Compra.id == id).first()
-
-        return item
-
     def findAll(self):
         list = db.session.query(Compra, CompraProduto, Produto).join(
                 CompraProduto, CompraProduto.id_compra == Compra.id).join(
@@ -146,7 +138,7 @@ class CompraProdutoRepository(RepositoryBase):
         except Exception as ex:
             log.error(ex)
             return None
-        
+
     def destroyByCompraId(self, id):
         try:
             itens: List[CompraProduto] = db.session.query(CompraProduto).filter_by(id_compra=id).all()
@@ -160,7 +152,7 @@ class CompraProdutoRepository(RepositoryBase):
         except Exception as ex:
             db.session.rollback()
             log.error(ex)
-            return False 
+            return False
 
 class VendaRepository(RepositoryBase):
 
@@ -203,7 +195,7 @@ class VendaProdutoRepository(RepositoryBase):
         except Exception as ex:
             log.error(ex)
             return None
-        
+
     def destroyByVendaId(self, id):
         try:
             itens: List[VendaProduto] = db.session.query(VendaProduto).filter_by(id_venda=id).all()
