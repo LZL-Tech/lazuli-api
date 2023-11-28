@@ -15,7 +15,7 @@ def novo_produto():
     }
 
 @pytest.fixture
-def atualizacao_produto():
+def update_produto():
     return {
         'descricao': 'Outro Produto', 
         'marca': 'Marca Teste',
@@ -40,8 +40,8 @@ def test_add_product(novo_produto):
     assert response.status_code == 201
     assert 'id_produto' in response.json()
 
-def test_update_product(atualizacao_produto):
-    response = requests.put(f'{base_url}/produto/1', json=atualizacao_produto)
+def test_update_product(update_produto):
+    response = requests.put(f'{base_url}/produto/1', json=update_produto)
     assert response.status_code == 204
 
 def test_delete_product():
@@ -60,7 +60,6 @@ def test_get_tipo_produtos():
     response = requests.get(f'{base_url}/tipo_produto')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
-
 
 
 def test_get_unidades_medidas():
@@ -95,7 +94,6 @@ def nova_compra():
             }
         ]
     }
-
 
 @pytest.fixture
 def update_compra():
@@ -134,17 +132,14 @@ def test_get_compras():
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
-
 def test_add_compra(nova_compra):
     response = requests.post(f'{base_url}/compra', json=nova_compra)
     assert response.status_code == 201
     assert 'id_compra' in response.json()
 
-
 def test_update_compra(update_compra):
     response = requests.put(f'{base_url}/compra/1', json=update_compra)
     assert response.status_code == 204
-
 
 def test_delete_compra():
     response = requests.delete(f'{base_url}/compra/3')
@@ -156,4 +151,72 @@ def test_searchCompraProductId():
     assert isinstance(response.json(), list)
 
 
+@pytest.fixture
+def nova_venda():
+    return {
+        "dt_venda": "2023-08-10",
+        "id_venda": 1,
+        "nm_cliente": "Ana Santos",
+        "venda_produto": [
+            {
+                "id_produto": 1,
+                "preco_unidade": 45.0,
+                "quantidade": 1.0
+            },
+            {
+                "id_produto": 3,
+                "preco_unidade": 5.0,
+                "quantidade": 99.0
+            }
+        ]
+    }
+
+@pytest.fixture
+def update_venda():
+    return {
+        "dt_venda": "2023-08-10",
+        "id_venda": 1,
+        "nm_cliente": "Ana Santos",
+        "venda_produto": [
+            {
+                "id_produto": 1,
+                "preco_unidade": 45.0,
+                "quantidade": 1.0
+            },
+            {
+                "id_produto": 3,
+                "preco_unidade": 5.0,
+                "quantidade": 99.0
+            }
+        ]
+    }
+
+
+def test_get_venda():
+    response = requests.get(f'{base_url}/venda/1')
+    assert response.status_code == 200
+    assert 'nm_cliente' in response.json()
+
+def test_get_vendas():
+    response = requests.get(f'{base_url}/venda')
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_add_venda(nova_venda):
+    response = requests.post(f'{base_url}/venda', json=nova_venda)
+    assert response.status_code == 201
+    assert 'id_venda' in response.json()
+
+def test_update_venda(update_venda):
+    response = requests.put(f'{base_url}/venda/2', json=update_venda)
+    assert response.status_code == 204
+    
+def test_delete_venda():
+    response = requests.delete(f'{base_url}/venda/3')
+    assert response.status_code == 204
+
+def test_searchVendaProductId():
+    response = requests.get(f'{base_url}/venda/produto/1')
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
 

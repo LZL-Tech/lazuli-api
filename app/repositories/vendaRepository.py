@@ -15,6 +15,7 @@ class VendaRepository(BaseRepository):
                 VendaProdutoModel, VendaProdutoModel.id_venda == VendaModel.id).join(
                 ProdutoModel, ProdutoModel.id == VendaProdutoModel.id_produto
             ).filter(VendaModel.id == id).first()
+        
         return item
 
     def findAll(self):

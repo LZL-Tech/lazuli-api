@@ -21,7 +21,8 @@ VALUES ('Bolo de Chocolate', 1, NULL, 10, 1, 45.00),
 
 INSERT INTO venda (nm_cliente, dt_venda)
 VALUES ('Ana Santos', '2023-08-10'),
-       ('Carlos Oliveira', '2023-08-15');
+       ('Carlos Oliveira', '2023-08-15'),
+       ('José Souza', '2023-09-25');
 
 INSERT INTO compra (fornecedor, dt_compra)
 VALUES ('Distribuidora de Ingredientes ABC', '2023-08-05'),
